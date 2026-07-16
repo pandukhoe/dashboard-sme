@@ -2879,6 +2879,27 @@ function persistConfig(){
   });
 }
 
+// Google's "publish to the web" CSV export lags behind the live sheet by its own
+// caching delay (can be several minutes, sometimes longer) -- so a plain page
+// refresh right after adding a visit/transaction can fetch a CSV snapshot that
+// hasn't caught up yet. Wholesale-replacing VISITS/TRANS with that stale snapshot
+// (the old behavior) made the just-added row visually vanish from the dashboard,
+// even though it was safely sitting in the actual sheet the whole time -- the exact
+// same class of bug already fixed for the weekly schedule sync. These signatures +
+// merge function let a fresh sync ADD anything new without ever discarding a
+// locally-known row just because the fresh CSV hasn't reflected it yet.
+function visitSignature(v){
+  return [v.sales, v.tanggal, v.nama_outlet, v.status_outlet, v.kategori, v.alasan||'', v.status_call||'', v.is_noo?'1':'0', v.catatan||''].join('|').toLowerCase();
+}
+function transSignature(t){
+  return [t.sales, t.tanggal, t.invoice||'', t.konsumen, t.produk, t.qty, t.harga, t.jumlah].join('|').toLowerCase();
+}
+function mergeByFreshFirst(freshList, localList, signatureFn){
+  const freshSigs = new Set(freshList.map(signatureFn));
+  const localOnly = localList.filter(item => !freshSigs.has(signatureFn(item)));
+  return freshList.concat(localOnly);
+}
+
 function applyNewData(newVisits, newTrans){
   VISITS = newVisits;
   TRANS = newTrans;
@@ -2937,7 +2958,7 @@ async function syncFromGoogleSheets(visitUrl, transUrl, masterUrl, silent){
       const newMaster = mapMasterOutletRows(masterParsed.data);
       if(newMaster.length){ MASTER_OUTLETS = newMaster; masterCount = newMaster.length; }
     }
-    applyNewData(newVisits, newTrans);
+    applyNewData(mergeByFreshFirst(newVisits, VISITS, visitSignature), mergeByFreshFirst(newTrans, TRANS, transSignature));
     dsLiveMode = true;
     const now = new Date();
     const masterInfo = masterCount!==null ? `, ${masterCount} master outlet` : '';
@@ -3292,8 +3313,19 @@ function doPost(e) {
     var row = headers.map(function (h) {
       return data[h] !== undefined ? data[h] : '';
     });
-    var targetRow = getTrueLastRow(sheet) + 1;
-    sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
+    // Dikunci supaya dua submit yang masuk hampir bersamaan (mis. dua sales kirim
+    // form dalam detik yang sama) tidak sama-sama menghitung "baris kosong
+    // berikutnya" yang SAMA lalu saling menimpa satu sama lain -- itu yang bisa
+    // bikin baris yang sudah tertulis hilang beneran dari sheet, bukan cuma soal
+    // tampilan dashboard.
+    var writeLock = LockService.getScriptLock();
+    writeLock.waitLock(30000);
+    try {
+      var targetRow = getTrueLastRow(sheet) + 1;
+      sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
+    } finally {
+      writeLock.releaseLock();
+    }
     return jsonOutput({ ok: true, outletKey: data.OUTLET_KEY || data.KEY || '' });
   } catch (err) {
     return jsonOutput({ ok: false, error: err.message });
@@ -3317,34 +3349,44 @@ function handleBulkUpsert(data) {
   // resolve/attach OUTLET_KEY (atau KEY, untuk MASTER OUTLET) sebelum di-upsert
   rows.forEach(function (r) { attachOutletKey(sheetName, r); });
 
-  var lastRow = getTrueLastRow(sheet);
-  var existingKeys = {};
-  if (lastRow > 1) {
-    var keyValues = sheet.getRange(2, keyColIdx + 1, lastRow - 1, 1).getValues();
-    for (var i = 0; i < keyValues.length; i++) {
-      var k = String(keyValues[i][0] || '').trim().toLowerCase();
-      if (k) existingKeys[k] = i + 2; // +2: 1-indexed + header row
-    }
-  }
-
+  // Dikunci dari baca "baris mana yang sudah ada" sampai selesai nulis, supaya dua
+  // proses bulk upsert yang jalan hampir bersamaan (mis. dua orang sama-sama Sync
+  // Semua) tidak baca kondisi sheet yang sama lalu saling menimpa baris yang baru
+  // ditulis satu sama lain.
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
   var updated = 0, inserted = 0;
-  var toAppend = [];
-  rows.forEach(function (r) {
-    var keyVal = String(r[keyField] || '').trim().toLowerCase();
-    if (!keyVal) return;
-    var rowValues = headers.map(function (h) {
-      return r[h] !== undefined ? r[h] : '';
-    });
-    if (existingKeys[keyVal]) {
-      sheet.getRange(existingKeys[keyVal], 1, 1, headers.length).setValues([rowValues]);
-      updated++;
-    } else {
-      toAppend.push(rowValues);
-      inserted++;
+  try {
+    var lastRow = getTrueLastRow(sheet);
+    var existingKeys = {};
+    if (lastRow > 1) {
+      var keyValues = sheet.getRange(2, keyColIdx + 1, lastRow - 1, 1).getValues();
+      for (var i = 0; i < keyValues.length; i++) {
+        var k = String(keyValues[i][0] || '').trim().toLowerCase();
+        if (k) existingKeys[k] = i + 2; // +2: 1-indexed + header row
+      }
     }
-  });
-  if (toAppend.length > 0) {
-    sheet.getRange(lastRow + 1, 1, toAppend.length, headers.length).setValues(toAppend);
+
+    var toAppend = [];
+    rows.forEach(function (r) {
+      var keyVal = String(r[keyField] || '').trim().toLowerCase();
+      if (!keyVal) return;
+      var rowValues = headers.map(function (h) {
+        return r[h] !== undefined ? r[h] : '';
+      });
+      if (existingKeys[keyVal]) {
+        sheet.getRange(existingKeys[keyVal], 1, 1, headers.length).setValues([rowValues]);
+        updated++;
+      } else {
+        toAppend.push(rowValues);
+        inserted++;
+      }
+    });
+    if (toAppend.length > 0) {
+      sheet.getRange(lastRow + 1, 1, toAppend.length, headers.length).setValues(toAppend);
+    }
+  } finally {
+    lock.releaseLock();
   }
   return jsonOutput({ ok: true, updated: updated, inserted: inserted });
 }
@@ -4098,6 +4140,7 @@ const schedFilterEcEl = document.getElementById('schedFilterEc');
 const scheduleStatusEl = document.getElementById('scheduleStatus');
 
 let currentWeekStart = weekStart(todayDate()); // default: minggu berjalan (minggu yang memuat hari ini)
+cleanupBloatedScheduleSlots(); // sekali saja saat load, bukan tiap render -- lihat komentar di definisinya
 let scheduleActiveSlot = null; // {sales, day, slotIdx}
 let evaluatingSlot = null; // {sales, day, slotIdx} - which filled slot is showing the evaluasi/follow-up editor
 const waModeState = {}; // { [sales]: { mode: 'harian'|'mingguan', day: 0-5 } }
@@ -4191,6 +4234,31 @@ function saveScheduleStore(obj){
   if(!store) return false;
   try { store.setItem('canvasing_schedule', JSON.stringify(obj)); return true; } catch(e){ return false; }
 }
+// Runs once at page load (not on every render, unlike the old approach) to trim
+// away empty trailing slots left behind by the now-fixed off-by-one sync bug.
+// Safe to run repeatedly since it only ever removes slots with no outlet AND no
+// note, but it only needs to run once per load since ensureWeekData no longer
+// creates this kind of bloat going forward.
+function cleanupBloatedScheduleSlots(){
+  const store = getScheduleStore();
+  let changed = false;
+  Object.keys(store).forEach(weekKey => {
+    const week = store[weekKey];
+    if(!week || typeof week !== 'object') return;
+    Object.keys(week).forEach(sales => {
+      const days = week[sales];
+      if(!Array.isArray(days)) return;
+      days.forEach(day => {
+        if(!day || !Array.isArray(day.slots)) return;
+        const before = day.slots.length;
+        trimEmptyTrailingSlots(day);
+        if(day.slots.length !== before) changed = true;
+      });
+    });
+  });
+  if(changed) saveScheduleStore(store);
+}
+
 function isValidDay(day){
   // Catatan: sengaja tidak mensyaratkan slots.length === SLOTS_PER_DAY di sini —
   // kalau SLOTS_PER_DAY diubah (mis. 6 -> 10), data minggu lama yang masih
@@ -4239,8 +4307,10 @@ function ensureWeekData(weekKey){
         // SLOTS_PER_DAY saat ini, tambah slot kosong di akhir tanpa menghapus
         // outlet yang sudah terisi -- dan kalau sudah LEBIH BANYAK (mis. pernah
         // ditambah lewat tombol "+ Tambah Slot"), jumlahnya dibiarkan, tidak dipotong.
-        // Tapi slot kosong tak terpakai di ujung akhir (sisa bug lama) dibersihkan dulu.
-        trimEmptyTrailingSlots(day);
+        // (Pembersihan slot kosong sisa bug lama dilakukan sekali saja saat halaman
+        // dibuka lewat cleanupBloatedScheduleSlots() -- BUKAN di sini, karena kalau
+        // dijalankan di setiap render, slot kosong yang baru saja ditambah lewat
+        // "+ Tambah Slot" akan langsung ikut kehapus lagi sebelum sempat diisi.)
         ensureSlotCapacity(day, SLOTS_PER_DAY);
       });
     }
