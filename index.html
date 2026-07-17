@@ -1756,10 +1756,19 @@ function showOverlay(el){
 // smooths this over instead of surfacing a scary error for what's usually a one-off.
 async function fetchWithRetry(url, options, retries){
   if(retries === undefined) retries = 2;
+  // Panggilan ke Apps Script (script.google.com) dialihkan lewat proxy
+  // /api/gas-proxy di domain yang sama, supaya browser tidak pernah langsung
+  // request cross-origin ke Google -- jadi tidak kena aturan CORS sama sekali.
+  // Proxy-nya sendiri (server Vercel -> Google) tidak terikat CORS karena itu
+  // request server-ke-server, bukan dari browser.
+  let actualUrl = url;
+  if(typeof url === 'string' && url.indexOf('script.google.com') !== -1){
+    actualUrl = '/api/gas-proxy?url=' + encodeURIComponent(url);
+  }
   let lastErr;
   for(let attempt = 0; attempt <= retries; attempt++){
     try{
-      return await fetch(url, options);
+      return await fetch(actualUrl, options);
     } catch(err){
       lastErr = err;
       if(attempt < retries) await new Promise(r => setTimeout(r, 700 * (attempt + 1)));
