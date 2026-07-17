@@ -228,6 +228,36 @@
   .outlet-mgr-actions .spacer{flex:1;}
   .outlet-mgr-actions .ds-btn-secondary, .outlet-mgr-actions .ds-btn-primary{flex:none;padding:8px 14px;}
 
+  .trx-group-card{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;}
+  .trx-group-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:10px;flex-wrap:wrap;}
+  .trx-group-date{font-family:var(--font-mono);font-size:11.5px;color:var(--ink);font-weight:600;}
+  .trx-group-sales{color:var(--ink-dim);font-size:11.5px;}
+  .trx-group-subtotal{font-family:var(--font-mono);font-weight:700;color:var(--green);white-space:nowrap;}
+  .trx-group-items{display:flex;flex-direction:column;gap:2px;border-top:1px dashed var(--line);padding-top:6px;}
+  .trx-group-item{display:flex;justify-content:space-between;gap:10px;padding:2px 0;color:var(--ink-dim);}
+  .trx-group-item .produk-name{color:var(--ink);flex:1;min-width:0;}
+  .trx-group-item .produk-qty{font-family:var(--font-mono);white-space:nowrap;flex:none;}
+  .outlet-sales-row{cursor:pointer;}
+  .outlet-sales-row:hover{background:var(--surface-2);}
+  .outlet-sales-pivot{table-layout:fixed;}
+  .outlet-sales-pivot th, .outlet-sales-pivot td{width:82px;}
+  .outlet-sales-pivot th:first-child, .outlet-sales-pivot td:first-child{
+    width:190px;position:sticky;left:0;z-index:1;background:var(--surface);
+    text-align:left;white-space:normal;box-shadow:1px 0 0 var(--line);
+  }
+  .outlet-sales-pivot thead th:first-child{z-index:3;}
+  .outlet-sales-pivot tbody tr:hover td:first-child{background:var(--surface-2);}
+  .outlet-sales-pivot th:last-child, .outlet-sales-pivot td:last-child{width:110px;}
+  .outlet-sales-pivot td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .outlet-sales-pivot td.month-cell{text-align:right;font-family:var(--font-mono);font-size:11.5px;cursor:pointer;color:var(--ink-dim);}
+  .outlet-sales-pivot td.month-cell.has-value{color:var(--ink);}
+  .outlet-sales-pivot td.month-cell:hover{background:var(--surface-2);}
+  .outlet-sales-pivot td.total-cell{text-align:right;font-family:var(--font-mono);font-weight:700;color:var(--green);cursor:pointer;}
+  .outlet-sales-pivot td.name-cell{cursor:pointer;font-weight:600;}
+  .outlet-sales-pivot td.name-cell:hover{color:var(--teal);text-decoration:underline;}
+  .outlet-sales-pivot th.sortable-col{cursor:pointer;user-select:none;}
+  .outlet-sales-pivot th.sortable-col:hover{color:var(--ink);}
+
   .modal-card-xwide{max-width:1180px;}
   #weeklyScheduleOverlay .modal-card{max-height:94vh;}
   .schedule-weeknav{
@@ -451,6 +481,21 @@
   @media(max-width:900px){
     .trans-item-row{grid-template-columns:1fr;}
     .trans-item-row-labels{display:none;}
+    .trans-item-mini-label{display:block;}
+  }
+  .trans-item-card{
+    position:relative;border:1px solid var(--line);border-radius:8px;background:var(--surface);
+    padding:10px 34px 10px 10px;margin-bottom:8px;
+  }
+  .trans-item-card:last-child{margin-bottom:0;}
+  .trans-item-del{
+    position:absolute;top:8px;right:8px;background:none;border:none;color:var(--alert);
+    font-size:17px;line-height:1;cursor:pointer;padding:2px 6px;border-radius:6px;
+  }
+  .trans-item-del:hover{background:var(--alert-soft);}
+  .trans-item-mini-label{
+    display:none;font-family:var(--font-mono);font-size:9.5px;text-transform:uppercase;
+    letter-spacing:.04em;color:var(--ink-dim);margin-bottom:2px;
   }
   .trans-item-editor .trans-tier-row{margin-top:10px;}
   .trans-add-item-row{display:flex;justify-content:flex-end;margin-top:10px;}
@@ -500,7 +545,7 @@
   .trans-totals-final .num{font-weight:700;font-size:16px;color:var(--teal);}
 
   .field-with-add{display:flex;gap:6px;align-items:stretch;}
-  .field-with-add select{flex:1;min-width:0;}
+  .field-with-add select, .field-with-add input{flex:1;min-width:0;}
   .field-add-btn{
     flex:none;width:32px;border-radius:8px;border:1px solid var(--line);
     background:var(--surface-2);color:var(--ink-dim);font-size:17px;line-height:1;
@@ -907,6 +952,7 @@
   <div class="main-tabs">
     <button class="main-tab active" id="tabBtnDashboard" type="button">&#128202; Dashboard</button>
     <button class="main-tab" id="tabBtnTransaksi" type="button">&#129534; Transaksi</button>
+    <button class="main-tab" id="tabBtnOutletSales" type="button">&#127970; Penjualan Outlet</button>
     <button class="main-tab" id="tabBtnFollowUp" type="button">&#128203; Follow Up <span class="tab-notif-badge" id="fuNotifBadge" hidden>0</span></button>
   </div>
 
@@ -1071,25 +1117,11 @@
             <div class="trans-item-row trans-item-row-labels">
               <span>Produk</span><span>Qty</span><span>Harga Satuan</span><span>Diskon %</span><span>Diskon Nominal</span><span>Harga Akhir</span>
             </div>
-            <div class="trans-item-row">
-              <input type="text" id="tProduk" list="produkDatalistTrans" placeholder="Ketik nama produk..." required autocomplete="off">
-              <datalist id="produkDatalistTrans"></datalist>
-              <input type="number" id="tQty" min="1" value="1" required>
-              <input type="number" id="tHarga" min="0" required>
-              <input type="number" id="tDiskonPersen" min="0" max="100" step="0.1" value="0">
-              <input type="number" id="tDiskonNominal" min="0" value="0">
-              <input type="number" id="tJumlah" min="0" required>
-            </div>
+            <div id="transItemsWrap"></div>
+            <datalist id="produkDatalistTrans"></datalist>
             <div class="trans-add-item-row">
               <button type="button" class="ds-btn-secondary trans-add-item-btn" id="transAddItemBtn">&#43; Tambah Item Lain</button>
             </div>
-          </div>
-
-          <div class="trans-cart-wrap" id="transCartWrap" hidden>
-            <table class="trans-cart-table">
-              <thead><tr><th>Produk</th><th>Qty</th><th>Harga Satuan</th><th>Diskon %</th><th>Diskon Nominal</th><th>Harga Akhir</th><th></th></tr></thead>
-              <tbody id="transCartBody"></tbody>
-            </table>
           </div>
 
           <div class="trans-totals-block">
@@ -1101,6 +1133,12 @@
               <span class="trans-global-disc-inputs">
                 <input type="number" id="tGlobalDiskonPersen" min="0" max="100" step="0.1" value="0">%
                 <input type="number" id="tGlobalDiskonNominal" min="0" value="0">Rp
+              </span>
+            </div>
+            <div class="trans-totals-line">
+              <span>Ongkos Kirim</span>
+              <span class="trans-global-disc-inputs">
+                <input type="number" id="tOngkir" min="0" value="0" style="width:120px;">Rp
               </span>
             </div>
             <div class="trans-totals-line trans-totals-final">
@@ -1185,6 +1223,39 @@
     </section>
   </div>
 
+  <div class="tab-panel" id="tabPanelOutletSales" hidden>
+    <section>
+      <div class="section-head">
+        <span class="idx">01</span><h2>Penjualan per Outlet — Bulanan</h2>
+        <div class="spacer"></div>
+        <select id="outletSalesYearSelect" class="ds-input" style="flex:none;width:110px;"></select>
+      </div>
+      <p class="ds-desc">Omzet tiap pelanggan/outlet per bulan untuk tahun yang dipilih (tidak ikut filter Tanggal di atas — ini pilih tahun sendiri). Nominal dalam Rupiah. Klik nama pelanggan untuk rincian satu tahun penuh, atau klik nominal di kolom bulan tertentu untuk rincian bulan itu saja (tanggal, invoice, dan produk yang dibeli).</p>
+      <div class="card">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input type="text" id="outletSalesSearch" class="ds-input" placeholder="Cari nama pelanggan/outlet..." style="flex:1;">
+        </div>
+        <div class="tablewrap">
+          <table id="tableOutletSales" class="outlet-sales-pivot">
+            <thead><tr id="outletSalesTableHead"></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-overlay" id="outletSalesDetailOverlay" hidden>
+    <div class="modal-card modal-card-wide">
+      <div class="modal-head">
+        <h2 id="outletSalesDetailTitle">Rincian Penjualan</h2>
+        <button class="modal-close" id="outletSalesDetailClose" type="button">&times;</button>
+      </div>
+      <div class="outlet-history-summary" id="outletSalesDetailSummary"></div>
+      <div class="outlet-history-list" id="outletSalesDetailList"></div>
+    </div>
+  </div>
+
   <footer>
     <span>Sumber: Jadwal_Canvasing_26.xlsx — sheet LOG VISIT &amp; TRANSAKSI</span>
     <span id="genInfo"></span>
@@ -1248,6 +1319,14 @@
               <option value="GT">GT</option>
               <option value="MT / TBK">MT / TBK</option>
             </select>
+          </div>
+          <div class="form-field">
+            <label>PIC Outlet <span style="color:var(--ink-dim);font-weight:400;">(opsional)</span></label>
+            <input type="text" id="fPic" placeholder="mis. Bu Dona">
+          </div>
+          <div class="form-field">
+            <label>No. Kontak <span style="color:var(--ink-dim);font-weight:400;">(opsional)</span></label>
+            <input type="text" id="fNoKontak" placeholder="mis. 0812xxxxxxxx">
           </div>
           <div class="form-field">
             <label>Kategori Tindak Lanjut</label>
@@ -1499,6 +1578,59 @@
           <tbody id="outletMgrBody"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addOutletOverlay" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>Tambah Outlet Baru</h2>
+        <button class="modal-close" id="addOutletClose" type="button">&times;</button>
+      </div>
+      <p class="ds-desc" id="addOutletDesc">Outlet baru langsung masuk ke Master Outlet dan otomatis tersinkron ke Google Sheets (kalau URL Apps Script sudah disetel). Kalau nama yang diketik sudah ada, datanya diperbarui — bukan bikin duplikat.</p>
+      <form id="addOutletForm">
+        <div class="form-grid">
+          <div class="form-field form-field-wide">
+            <label>Nama Outlet</label>
+            <input type="text" id="aoNama" required autocomplete="off" placeholder="Nama outlet...">
+          </div>
+          <div class="form-field">
+            <label>Wilayah <span style="color:var(--ink-dim);font-weight:400;">(kecamatan)</span></label>
+            <div class="field-with-add">
+              <input type="text" id="aoWilayah" list="wilayahDatalist" autocomplete="off" placeholder="mis. Jatisari">
+              <button type="button" class="field-add-btn" id="aoCariWilayahBtn" title="Cari otomatis lewat Google Maps">&#128269;</button>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Tipe Outlet</label>
+            <select id="aoTipeOutlet">
+              <option value="">—</option>
+              <option value="Horeca">Horeca</option>
+              <option value="GT">GT</option>
+              <option value="MT / TBK">MT / TBK</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Status Outlet</label>
+            <select id="aoStatusOutlet">
+              <option value="Outlet Baru">Outlet Baru</option>
+              <option value="Existing">Existing</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>PIC <span style="color:var(--ink-dim);font-weight:400;">(opsional)</span></label>
+            <input type="text" id="aoPic" autocomplete="off" placeholder="mis. Bu Dona">
+          </div>
+          <div class="form-field">
+            <label>No. Kontak <span style="color:var(--ink-dim);font-weight:400;">(opsional)</span></label>
+            <input type="text" id="aoNoKontak" autocomplete="off" placeholder="mis. 0812xxxxxxxx">
+          </div>
+        </div>
+        <div class="form-actions">
+          <span class="form-status" id="addOutletStatus"></span>
+          <button type="submit" class="ds-btn-primary form-submit-btn" id="addOutletSubmitBtn">Simpan Outlet</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2080,6 +2212,172 @@ function topN(arr, keyFn, valFn, n){
   return Array.from(map.entries()).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value).slice(0,n);
 }
 
+// ---------- Tab: Penjualan per Outlet — pivot bulanan (independen dari filter Tanggal global) ----------
+let outletSalesYear = todayDate().getFullYear();
+let outletSalesData = [];
+
+function populateOutletSalesYearSelect(){
+  const sel = document.getElementById('outletSalesYearSelect');
+  const years = new Set([outletSalesYear]);
+  TRANS.forEach(r => { if(r._date && !isNaN(r._date)) years.add(r._date.getFullYear()); });
+  const sorted = Array.from(years).sort((a,b) => b-a);
+  const prev = sel.value;
+  sel.innerHTML = sorted.map(y => `<option value="${y}">${y}</option>`).join('');
+  sel.value = prev && sorted.includes(+prev) ? prev : String(outletSalesYear);
+}
+
+// Kumpulkan TRANS dalam satu tahun, dikelompokkan per outlet (pakai OUTLET_KEY kalau
+// ada, biar tidak kepecah gara-gara beda ejaan nama), dengan omzet dipecah per bulan
+// (index 0 = Januari ... 11 = Desember). Transaksi tiap bulan juga dikelompokkan lagi
+// per invoice/transaksi (pakai NO. INVOICE kalau ada, jatuh balik ke tanggal+sales
+// untuk data yang belum punya nomor invoice) supaya bisa dirinci saat diklik.
+function computeOutletMonthlySales(year){
+  const filtered = TRANS.filter(r => {
+    if(!r._date || isNaN(r._date)) return false;
+    if(r._date.getFullYear() !== year) return false;
+    if(state.sales !== 'all' && r.sales !== state.sales) return false;
+    return true;
+  });
+
+  const map = new Map();
+  filtered.forEach(r => {
+    const name = r.konsumen;
+    if(!name || name==='-') return;
+    const outletMatch = MASTER_OUTLETS.find(o => recordMatchesOutlet(r, o, r.outlet_key, name));
+    const groupId = outletMatch ? (outletMatch.key || normOutletKey(outletMatch.nama)) : normOutletKey(name);
+    if(!map.has(groupId)){
+      map.set(groupId, {
+        name: outletMatch ? outletMatch.nama : name,
+        months: new Array(12).fill(0),
+        total: 0,
+        txByMonth: Array.from({length:12}, () => new Map()),
+      });
+    }
+    const entry = map.get(groupId);
+    const m = r._date.getMonth(); // 0-11
+    entry.months[m] += (r.jumlah||0);
+    entry.total += (r.jumlah||0);
+
+    const txKey = r.invoice || `${r.tanggal}|${r.sales||''}`;
+    const txMap = entry.txByMonth[m];
+    if(!txMap.has(txKey)){
+      txMap.set(txKey, { tanggal: r.tanggal, _date: r._date, sales: r.sales, invoice: r.invoice||null, items: [], subtotal: 0 });
+    }
+    const tx = txMap.get(txKey);
+    tx.items.push({ produk: r.produk, qty: r.qty, harga: r.harga, jumlah: r.jumlah });
+    tx.subtotal += (r.jumlah||0);
+  });
+
+  return Array.from(map.values()).map(e => ({
+    ...e,
+    txByMonth: e.txByMonth.map(txMap => Array.from(txMap.values()).sort((a,b) => b._date - a._date)),
+  })).sort((a,b) => b.total - a.total);
+}
+
+let outletSalesSort = { col: 'total', dir: 'desc' }; // col: 'name' | 'total' | 0-11 (index bulan)
+
+function renderOutletSalesTableHead(){
+  const tr = document.getElementById('outletSalesTableHead');
+  const arrow = (col) => outletSalesSort.col === col ? (outletSalesSort.dir === 'asc' ? ' &#9650;' : ' &#9660;') : '';
+  tr.innerHTML = `<th class="sortable-col" data-col="name">Nama Pelanggan${arrow('name')}</th>` +
+    MONTHS_ID.map((m, i) => `<th class="num sortable-col" data-col="${i}">${m}${arrow(i)}</th>`).join('') +
+    `<th class="num sortable-col" data-col="total">Total${arrow('total')}</th>`;
+  tr.querySelectorAll('th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const raw = th.dataset.col;
+      const col = (raw === 'name' || raw === 'total') ? raw : +raw;
+      if(outletSalesSort.col === col){
+        outletSalesSort.dir = outletSalesSort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        outletSalesSort.col = col;
+        outletSalesSort.dir = col === 'name' ? 'asc' : 'desc'; // nama: A-Z dulu; angka: terbesar dulu
+      }
+      renderOutletSalesTable();
+    });
+  });
+}
+
+function sortOutletSalesRows(rows){
+  const { col, dir } = outletSalesSort;
+  const mul = dir === 'asc' ? 1 : -1;
+  return rows.slice().sort((a, b) => {
+    let av, bv;
+    if(col === 'name'){ av = a.name.toLowerCase(); bv = b.name.toLowerCase(); }
+    else if(col === 'total'){ av = a.total; bv = b.total; }
+    else { av = a.months[col]; bv = b.months[col]; }
+    if(av < bv) return -1 * mul;
+    if(av > bv) return 1 * mul;
+    return a.name.localeCompare(b.name); // tie-breaker biar urutan stabil
+  });
+}
+
+function fmtRpCompact(n){
+  return n ? n.toLocaleString('id-ID') : '—';
+}
+
+function renderOutletSalesTable(){
+  populateOutletSalesYearSelect();
+  renderOutletSalesTableHead();
+  outletSalesData = computeOutletMonthlySales(outletSalesYear);
+  const q = document.getElementById('outletSalesSearch').value.trim().toLowerCase();
+  const filtered = q ? outletSalesData.filter(d => d.name.toLowerCase().includes(q)) : outletSalesData;
+  const sorted = sortOutletSalesRows(filtered);
+
+  const tbody = document.querySelector('#tableOutletSales tbody');
+  tbody.innerHTML = sorted.map((d, idx) => `
+    <tr data-idx="${idx}">
+      <td class="name-cell" data-act="name">${d.name.replace(/</g,'&lt;')}</td>
+      ${d.months.map((v, m) => `<td class="month-cell ${v?'has-value':''}" data-act="month" data-month="${m}">${fmtRpCompact(v)}</td>`).join('')}
+      <td class="total-cell" data-act="name">${fmtRpCompact(d.total)}</td>
+    </tr>`).join('') || `<tr><td colspan="14" class="empty-note">Tidak ada transaksi pada tahun ini.</td></tr>`;
+
+  tbody.querySelectorAll('td[data-act]').forEach(td => {
+    td.addEventListener('click', () => {
+      const entry = sorted[+td.closest('tr').dataset.idx];
+      if(!entry) return;
+      if(td.dataset.act === 'month') openOutletSalesDetail(entry, +td.dataset.month);
+      else openOutletSalesDetail(entry, null);
+    });
+  });
+}
+document.getElementById('outletSalesSearch').addEventListener('input', renderOutletSalesTable);
+document.getElementById('outletSalesYearSelect').addEventListener('change', (e) => {
+  outletSalesYear = +e.target.value;
+  renderOutletSalesTable();
+});
+
+const outletSalesDetailOverlay = document.getElementById('outletSalesDetailOverlay');
+document.getElementById('outletSalesDetailClose').onclick = () => { outletSalesDetailOverlay.hidden = true; };
+outletSalesDetailOverlay.addEventListener('click', (e) => { if(e.target===outletSalesDetailOverlay) outletSalesDetailOverlay.hidden = true; });
+
+// monthIdx null = rincian satu tahun penuh (semua bulan); angka 0-11 = rincian bulan itu saja.
+function openOutletSalesDetail(entry, monthIdx){
+  if(!entry) return;
+  const isMonth = monthIdx !== null && monthIdx !== undefined;
+  const periodLabel = isMonth ? `${MONTHS_ID[monthIdx]} ${outletSalesYear}` : `Tahun ${outletSalesYear}`;
+  const total = isMonth ? entry.months[monthIdx] : entry.total;
+  const txGroups = isMonth ? entry.txByMonth[monthIdx] : entry.txByMonth.flat().sort((a,b) => b._date - a._date);
+
+  document.getElementById('outletSalesDetailTitle').textContent = `Rincian Penjualan — ${entry.name}`;
+  document.getElementById('outletSalesDetailSummary').innerHTML = `
+    <div class="kpi-chip">Periode <b>${periodLabel}</b></div>
+    <div class="kpi-chip">Total Omzet <b>${fmtRupiah(total)}</b></div>
+    <div class="kpi-chip">Jml Transaksi <b>${txGroups.length}</b></div>
+    <div class="kpi-chip">Rata-rata/Transaksi <b>${fmtRupiah(txGroups.length ? Math.round(total/txGroups.length) : 0)}</b></div>
+  `;
+  document.getElementById('outletSalesDetailList').innerHTML = txGroups.map(tx => `
+    <div class="trx-group-card">
+      <div class="trx-group-head">
+        <span><span class="trx-group-date">${fmtDateShort(tx._date)}</span>${tx.sales ? ` <span class="trx-group-sales">· ${tx.sales.replace(/</g,'&lt;')}</span>` : ''}${tx.invoice ? ` <span class="trx-group-sales">· Inv. ${tx.invoice.replace(/</g,'&lt;')}</span>` : ''}</span>
+        <span class="trx-group-subtotal">${fmtRupiah(tx.subtotal)}</span>
+      </div>
+      <div class="trx-group-items">
+        ${tx.items.map(it => `<div class="trx-group-item"><span class="produk-name">${(it.produk||'').replace(/</g,'&lt;')}</span><span class="produk-qty">${it.qty} × ${fmtRupiah(it.harga)} = ${fmtRupiah(it.jumlah)}</span></div>`).join('')}
+      </div>
+    </div>`).join('') || `<div class="outlet-history-empty">Belum ada transaksi pada periode ini.</div>`;
+  showOverlay(outletSalesDetailOverlay);
+}
+
 function topKonsumenFull(ft){
   const map = new Map();
   ft.forEach(r => {
@@ -2527,6 +2825,7 @@ function renderAll(){
   state.pageTopKonsumen = 1; state.pageVisits = 1; state.pageTrans = 1;
   safe(() => renderTopKonsumenTable(ft), 'top-konsumen-table');
   safe(() => renderTables(fv, ft), 'tables');
+  safe(() => { if(!tabPanelOutletSales.hidden) renderOutletSalesTable(); }, 'outlet-sales-table');
 }
 document.getElementById('transTableSearch').addEventListener('input', () => {
   state.pageTrans = 1;
@@ -3061,13 +3360,21 @@ dsAutoFullSyncIntervalEl.addEventListener('change', () => { persistConfig(); set
     // cuma ke-tarik kalau tombol "Sync Semua" diklik manual -- jadi update terbaru di
     // Sheets (mis. Target bulan ini) tidak langsung kelihatan begitu halaman dibuka.
     // Sekarang otomatis ditarik juga saat load, sama seperti LOG VISIT/TRANSAKSI di atas.
+    // Dijalankan BARENGAN (Promise.all), bukan satu-satu berurutan -- sebelumnya tiap
+    // sheet nunggu gantian selesai dulu baru mulai yang berikutnya, jadi loading-nya
+    // jadi sekitar 4x lebih lama dari yang seharusnya untuk hal yang sama sekali tidak
+    // saling bergantung.
     (async () => {
       try{
-        if(cfg.scheduleUrl) await pullAllScheduleFromSheets();
-        if(cfg.pricelistUrl) await pullPricelistFromSheets();
-        if(cfg.manualFuUrl) await pullManualFollowupsFromSheets();
-        if(cfg.targetUrl) await pullTargetsFromSheets();
-        if(cfg.scheduleUrl || cfg.pricelistUrl || cfg.manualFuUrl || cfg.targetUrl) renderAll();
+        const tasks = [];
+        if(cfg.scheduleUrl) tasks.push(pullAllScheduleFromSheets());
+        if(cfg.pricelistUrl) tasks.push(pullPricelistFromSheets());
+        if(cfg.manualFuUrl) tasks.push(pullManualFollowupsFromSheets());
+        if(cfg.targetUrl) tasks.push(pullTargetsFromSheets());
+        if(tasks.length){
+          await Promise.all(tasks);
+          renderAll();
+        }
       } catch(err){
         console.error('Auto-load sheet pendukung gagal:', err);
       }
@@ -3091,6 +3398,8 @@ const fWilayah = document.getElementById('fWilayah');
 const fPrioritas = document.getElementById('fPrioritas');
 const fStatusOutlet = document.getElementById('fStatusOutlet');
 const fTipeOutlet = document.getElementById('fTipeOutlet');
+const fPic = document.getElementById('fPic');
+const fNoKontak = document.getElementById('fNoKontak');
 const fKategori = document.getElementById('fKategori');
 const fEc = document.getElementById('fEc');
 const fNoo = document.getElementById('fNoo');
@@ -3234,6 +3543,29 @@ visitForm.addEventListener('submit', async (e) => {
     VISITS.push(newRow);
     recomputeDerived();
     refreshOutletStatsFromData();
+
+    // Kalau PIC/No. Kontak diisi (atau ini outlet baru sama sekali), ikut update
+    // Master Outlet -- digabung ke data outlet yang sudah ada (kalau ada) supaya
+    // field lain yang sudah terisi tidak ikut ke-kosongkan.
+    const picVal = fPic.value.trim();
+    const kontakVal = fNoKontak.value.trim();
+    const existingOutlet = MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(outletName));
+    if(picVal || kontakVal || !existingOutlet){
+      const merged = {
+        nama: outletName,
+        key: existingOutlet ? existingOutlet.key : (resolveOutletKey(outletName) || null),
+        wilayah: fWilayah.value.trim() || (existingOutlet ? existingOutlet.wilayah : null),
+        tipe_outlet: fTipeOutlet.value || (existingOutlet ? existingOutlet.tipe_outlet : null),
+        status_outlet: fStatusOutlet.value || (existingOutlet ? existingOutlet.status_outlet : null),
+        pic: picVal || (existingOutlet ? existingOutlet.pic : null),
+        no_kontak: kontakVal || (existingOutlet ? existingOutlet.no_kontak : null),
+      };
+      if(existingOutlet) Object.assign(existingOutlet, merged);
+      else MASTER_OUTLETS.push({ ...merged, histori: [], omzet: 0, last_visit: null, last_ec: null, ec_value: 0, sales: salesName });
+      saveMasterOutletsOverride(MASTER_OUTLETS);
+      pushOutletsToSheets([merged]).catch(err => console.error('Push PIC/kontak error:', err));
+    }
+
     buildSalesPills(); buildQuickPills(); renderMetaRange(); renderAll();
     if(!scheduleOverlay.hidden) autoFillFromActualVisits();
 
@@ -3873,21 +4205,131 @@ function openOutletManager(){
   renderOutletMgrTable('');
   showOverlay(outletManagerOverlay);
 }
-function openOutletManagerForNewOutlet(name){
-  outletMgrDraft = MASTER_OUTLETS.map(o => ({...o}));
-  outletMgrSearch.value = name;
-  outletMgrStatus.textContent = `Outlet baru "${name}" otomatis ditambahkan ke Master Outlet — lengkapi Wilayah/Tipe/Status di bawah, lalu klik Simpan.`;
-  outletMgrStatus.className = 'ds-status ok';
-  renderOutletMgrTable(name);
-  showOverlay(outletManagerOverlay);
-  // fokus ke kolom Wilayah baris outlet baru biar tinggal ketik
-  setTimeout(() => {
-    const wilayahInput = outletMgrBody.querySelector('input[data-field="wilayah"]');
-    if(wilayahInput) wilayahInput.focus();
-  }, 50);
-  const newIdx = outletMgrDraft.findIndex(o => normOutletKey(o.nama) === normOutletKey(name));
-  if(newIdx !== -1) autoFillWilayahForRow(newIdx);
+// ---------- Tambah Outlet Baru (panel berdiri sendiri) ----------
+// Dipakai dari 3 tempat: tombol "+ Tambah Outlet" di Kelola Outlet, Input Transaksi
+// (saat nama konsumen/outlet yang diketik belum ada), dan Jadwal Mingguan (saat
+// nama outlet yang diketik ke sebuah slot belum ada). Sebelumnya alur "outlet baru"
+// itu cuma menyisipkan satu baris kosong di atas tabel Kelola Outlet -- sekarang
+// pakai form khusus, dan outlet-nya beneran tersimpan (bukan sekadar baris kosong)
+// begitu form ini disubmit.
+const addOutletOverlay = document.getElementById('addOutletOverlay');
+const addOutletClose = document.getElementById('addOutletClose');
+const addOutletForm = document.getElementById('addOutletForm');
+const aoNama = document.getElementById('aoNama');
+const aoWilayah = document.getElementById('aoWilayah');
+const aoTipeOutlet = document.getElementById('aoTipeOutlet');
+const aoStatusOutlet = document.getElementById('aoStatusOutlet');
+const aoPic = document.getElementById('aoPic');
+const aoNoKontak = document.getElementById('aoNoKontak');
+const addOutletStatus = document.getElementById('addOutletStatus');
+const addOutletSubmitBtn = document.getElementById('addOutletSubmitBtn');
+let addOutletOnSaved = null; // callback(outletObj) dipanggil setelah sukses simpan
+
+function openAddOutletModal(prefillName, onSaved){
+  addOutletForm.reset();
+  aoStatusOutlet.value = 'Outlet Baru';
+  addOutletStatus.textContent = '';
+  addOutletStatus.className = 'form-status';
+  addOutletOnSaved = onSaved || null;
+  const existing = prefillName ? MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(prefillName)) : null;
+  if(existing){
+    aoNama.value = existing.nama;
+    aoWilayah.value = existing.wilayah || '';
+    aoTipeOutlet.value = existing.tipe_outlet || '';
+    aoStatusOutlet.value = existing.status_outlet || 'Existing';
+    aoPic.value = existing.pic || '';
+    aoNoKontak.value = existing.no_kontak || '';
+    addOutletStatus.textContent = 'Outlet ini sudah ada di Master Outlet — lengkapi/perbarui datanya lalu simpan.';
+    addOutletStatus.className = 'form-status';
+  } else if(prefillName){
+    aoNama.value = prefillName;
+  }
+  showOverlay(addOutletOverlay);
+  setTimeout(() => { (prefillName ? aoWilayah : aoNama).focus(); }, 50);
 }
+addOutletClose.onclick = () => { addOutletOverlay.hidden = true; };
+addOutletOverlay.addEventListener('click', (e) => { if(e.target===addOutletOverlay) addOutletOverlay.hidden = true; });
+
+const aoCariWilayahBtn = document.getElementById('aoCariWilayahBtn');
+aoCariWilayahBtn.addEventListener('click', async () => {
+  const nama = aoNama.value.trim();
+  if(!nama){
+    addOutletStatus.textContent = 'Isi Nama Outlet dulu sebelum cari wilayah.';
+    addOutletStatus.className = 'form-status err';
+    return;
+  }
+  aoCariWilayahBtn.disabled = true;
+  const original = aoCariWilayahBtn.innerHTML;
+  aoCariWilayahBtn.innerHTML = '&#8987;';
+  const prevPlaceholder = aoWilayah.placeholder;
+  aoWilayah.placeholder = 'Mencari wilayah...';
+  try{
+    const w = await searchWilayahForOutlet(nama);
+    if(w){
+      aoWilayah.value = w;
+      addOutletStatus.textContent = `Wilayah ditemukan: ${w}`;
+      addOutletStatus.className = 'form-status ok';
+    } else {
+      addOutletStatus.textContent = 'Wilayah tidak ditemukan — isi manual.';
+      addOutletStatus.className = 'form-status err';
+    }
+  } finally {
+    aoCariWilayahBtn.disabled = false;
+    aoCariWilayahBtn.innerHTML = original;
+    aoWilayah.placeholder = prevPlaceholder;
+  }
+});
+
+addOutletForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const nama = aoNama.value.trim();
+  if(!nama){
+    addOutletStatus.textContent = 'Nama outlet wajib diisi.';
+    addOutletStatus.className = 'form-status err';
+    return;
+  }
+  const existing = MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(nama));
+  const merged = {
+    nama,
+    key: existing ? existing.key : null,
+    wilayah: aoWilayah.value.trim() || (existing ? existing.wilayah : null),
+    tipe_outlet: aoTipeOutlet.value || (existing ? existing.tipe_outlet : null),
+    status_outlet: aoStatusOutlet.value || (existing ? existing.status_outlet : null),
+    pic: aoPic.value.trim() || (existing ? existing.pic : null),
+    no_kontak: aoNoKontak.value.trim() || (existing ? existing.no_kontak : null),
+  };
+  addOutletSubmitBtn.disabled = true;
+  addOutletStatus.textContent = 'Menyimpan...';
+  addOutletStatus.className = 'form-status';
+  try{
+    if(existing) Object.assign(existing, merged);
+    else MASTER_OUTLETS.push({ ...merged, histori: 0, omzet: 0, last_visit: null, last_ec: null, ec_value: 0, sales: [] });
+    saveMasterOutletsOverride(MASTER_OUTLETS);
+    populateOutletDatalist();
+    if(typeof populateTransOutletDatalist === 'function') populateTransOutletDatalist();
+    const writeUrl = dsWriteUrlEl.value.trim();
+    if(writeUrl){
+      const result = await pushOutletsToSheets([merged]);
+      if(!result.ok) throw new Error(result.error || 'Gagal sinkron ke Sheets');
+    }
+    addOutletStatus.textContent = `Outlet "${nama}" tersimpan ✓`;
+    addOutletStatus.className = 'form-status ok';
+    const savedOutlet = MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(nama));
+    if(addOutletOnSaved && savedOutlet) addOutletOnSaved(savedOutlet);
+    setTimeout(() => { addOutletOverlay.hidden = true; }, 700);
+  } catch(err){
+    // Tetap tersimpan lokal walau sync ke Sheets gagal -- callback tetap dipanggil
+    // supaya form yang memicunya (Transaksi/Jadwal) bisa lanjut; sync bisa menyusul
+    // lewat "Sync Semua".
+    addOutletStatus.textContent = `Tersimpan lokal, tapi gagal sinkron ke Sheets: ${err.message}`;
+    addOutletStatus.className = 'form-status err';
+    console.error('Add outlet error:', err);
+    const savedOutlet = MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(nama));
+    if(addOutletOnSaved && savedOutlet) addOutletOnSaved(savedOutlet);
+  } finally {
+    addOutletSubmitBtn.disabled = false;
+  }
+});
 
 manageOutletBtn.onclick = openOutletManager;
 outletManagerClose.onclick = () => { outletManagerOverlay.hidden = true; };
@@ -3903,9 +4345,11 @@ document.getElementById('outletMgrSortWilayahBtn').onclick = () => {
 };
 
 document.getElementById('outletMgrAddBtn').onclick = () => {
-  outletMgrDraft.unshift({ key:null, nama:'', wilayah:'', tipe_outlet:'', status_outlet:'', no_kontak:'', pic:'', histori:0 });
-  outletMgrSearch.value = '';
-  renderOutletMgrTable('');
+  openAddOutletModal(null, () => {
+    outletMgrDraft = MASTER_OUTLETS.map(o => ({...o}));
+    outletMgrSearch.value = '';
+    renderOutletMgrTable('');
+  });
 };
 
 function saveMasterOutletsOverride(list){
@@ -4505,19 +4949,14 @@ function commitSlotInput(input){
     return;
   }
 
-  // Outlet belum ada di Master Outlet -> tambahkan otomatis, pakai di slot ini,
-  // lalu buka panel Kelola Outlet supaya tinggal dilengkapi datanya.
-  MASTER_OUTLETS.push({
-    nama: typed, wilayah: null, tipe_outlet: null, status_outlet: null, no_kontak: null, pic: null,
-    histori: 0, omzet: 0, last_visit: null, last_ec: null, ec_value: 0, sales: [],
+  // Outlet belum ada di Master Outlet -> buka panel Tambah Outlet Baru dulu supaya
+  // datanya lengkap dari awal (bukan bikin baris kosong dulu baru dilengkapi).
+  // Outlet baru cuma benar-benar tersimpan begitu form itu disubmit; slot ini baru
+  // ke-isi setelah itu, lewat callback.
+  openAddOutletModal(typed, (outlet) => {
+    mutateSchedule(week => { week[sales][day].slots[slotIdx] = outlet.nama; });
+    scheduleActiveSlot = null;
   });
-  saveMasterOutletsOverride(MASTER_OUTLETS);
-  populateOutletDatalist();
-
-  mutateSchedule(week => { week[sales][day].slots[slotIdx] = typed; });
-  scheduleActiveSlot = null;
-
-  openOutletManagerForNewOutlet(typed);
 }
 function setDayOff(sales, day, reasonSelectValue){
   let reason = reasonSelectValue;
@@ -5219,18 +5658,24 @@ const tabPanelDashboard = document.getElementById('tabPanelDashboard');
 const tabPanelTransaksi = document.getElementById('tabPanelTransaksi');
 const tabBtnFollowUp = document.getElementById('tabBtnFollowUp');
 const tabPanelFollowUp = document.getElementById('tabPanelFollowUp');
+const tabBtnOutletSales = document.getElementById('tabBtnOutletSales');
+const tabPanelOutletSales = document.getElementById('tabPanelOutletSales');
 function switchTab(tab){
   tabBtnDashboard.classList.toggle('active', tab==='dashboard');
   tabBtnTransaksi.classList.toggle('active', tab==='transaksi');
   tabBtnFollowUp.classList.toggle('active', tab==='followup');
+  tabBtnOutletSales.classList.toggle('active', tab==='outletsales');
   tabPanelDashboard.hidden = tab!=='dashboard';
   tabPanelTransaksi.hidden = tab!=='transaksi';
   tabPanelFollowUp.hidden = tab!=='followup';
+  tabPanelOutletSales.hidden = tab!=='outletsales';
   if(tab==='followup') renderFollowUpTable();
+  if(tab==='outletsales') renderOutletSalesTable();
 }
 tabBtnDashboard.onclick = () => switchTab('dashboard');
 tabBtnTransaksi.onclick = () => switchTab('transaksi');
 tabBtnFollowUp.onclick = () => switchTab('followup');
+tabBtnOutletSales.onclick = () => switchTab('outletsales');
 
 // ---------- Input Transaksi ----------
 const tSales = document.getElementById('tSales');
@@ -5238,31 +5683,48 @@ const tTanggal = document.getElementById('tTanggal');
 const tKonsumen = document.getElementById('tKonsumen');
 const outletMasterListTransEl = document.getElementById('outletMasterListTrans');
 const tTipeOutlet = document.getElementById('tTipeOutlet');
-const tProduk = document.getElementById('tProduk');
 const tDbp = document.getElementById('tDbp');
 const tWbp = document.getElementById('tWbp');
 const tPricelistB = document.getElementById('tPricelistB');
-const tQty = document.getElementById('tQty');
-const tHarga = document.getElementById('tHarga');
-const tDiskonPersen = document.getElementById('tDiskonPersen');
-const tDiskonNominal = document.getElementById('tDiskonNominal');
-const tJumlah = document.getElementById('tJumlah');
 const tKeterangan = document.getElementById('tKeterangan');
 const transFormStatusEl = document.getElementById('transFormStatus');
 const transFormSubmitBtn = document.getElementById('transFormSubmitBtn');
 const transAddItemBtn = document.getElementById('transAddItemBtn');
-const transCartWrap = document.getElementById('transCartWrap');
-const transCartBody = document.getElementById('transCartBody');
+const transItemsWrap = document.getElementById('transItemsWrap');
 const tGlobalDiskonPersen = document.getElementById('tGlobalDiskonPersen');
 const tGlobalDiskonNominal = document.getElementById('tGlobalDiskonNominal');
+const tOngkir = document.getElementById('tOngkir');
 const transSubtotalDisplay = document.getElementById('transSubtotalDisplay');
 const transGrandTotalDisplay = document.getElementById('transGrandTotalDisplay');
 const tSalesAddBtn = document.getElementById('tSalesAddBtn');
 
-let transCart = []; // items already added to the current transaction (multi-item)
+// Kalau nama yang diketik di "Nama Konsumen / Outlet" belum ada di Master Outlet
+// sama sekali, begitu field-nya ditinggalkan (blur) otomatis buka panel Tambah
+// Outlet Baru supaya datanya (wilayah, tipe, PIC, kontak) langsung lengkap dari
+// awal -- bukan cuma bikin baris kosong di Master Outlet.
+tKonsumen.addEventListener('blur', () => {
+  const typed = tKonsumen.value.trim();
+  if(!typed) return;
+  const match = MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(typed));
+  if(match) return; // sudah ada, tidak perlu apa-apa
+  if(!addOutletOverlay.hidden) return; // panel tambah outlet lagi kebuka, jangan dobel
+  openAddOutletModal(typed, (outlet) => {
+    tKonsumen.value = outlet.nama;
+  });
+});
+
+// Setiap produk sekarang jadi "kartu" sendiri-sendiri (bukan 1 baris input + daftar
+// terpisah di bawahnya) -- transItems adalah sumber data untuk semua kartu yang lagi
+// ditampilkan, masing-masing punya tombol hapus sendiri (termasuk kartu pertama yang
+// belum ditambahkan ke mana-mana, bukan cuma yang "sudah masuk list").
+let transItems = [];
 let transGlobalEditingField = null; // guards two-way sync of global discount %/nominal
 
 const TRANS_KATEGORI_LABEL = { HERB_SPICES:'Kokiko Herb & Spices', RED_LABEL:'Kokiko Red Label', HORECA:'Horeca' };
+
+function newTransItem(){
+  return { id: 'ti'+Math.random().toString(36).slice(2,9), produkLabel:'', qty:1, harga:0, diskonPersen:0, diskonNominal:0, jumlah:0, editingField:null };
+}
 
 function populateTransSalesDropdown(keepSelected){
   const prevValue = keepSelected ? tSales.value : null;
@@ -5301,7 +5763,7 @@ function populateProdukDropdown(){
     PRODUK_LABEL_MAP.set(label, idx);
     return `<option value="${label.replace(/"/g,'&quot;')}"></option>`;
   }).join('');
-  updateHargaFromPricelist();
+  updateAllPricesFromPricelist();
 }
 
 function getSelectedTier(){
@@ -5325,58 +5787,145 @@ function lookupPrice(item){
   return anyTier ? anyTier.pcs : null;
 }
 
-function getSelectedProdukItem(){
-  const idx = PRODUK_LABEL_MAP.get(tProduk.value.trim());
-  return idx !== undefined ? PRICELIST[idx] : null;
-}
-
-let transEditingField = null; // guards against recursive recalculation
-
-function updateHargaFromPricelist(){
-  const item = getSelectedProdukItem();
-  const price = lookupPrice(item);
-  if(price !== null){
-    tHarga.value = price;
-  }
-  recalcFromBase();
-}
-
-function recalcFromBase(){
-  const qty = parseFloat(tQty.value) || 0;
-  const harga = parseFloat(tHarga.value) || 0;
-  const base = qty * harga;
-  if(transEditingField === 'persen'){
-    const persen = parseFloat(tDiskonPersen.value) || 0;
-    const nominal = Math.round(base * persen / 100);
-    tDiskonNominal.value = nominal;
-    tJumlah.value = Math.max(0, base - nominal);
-  } else if(transEditingField === 'nominal'){
-    const nominal = parseFloat(tDiskonNominal.value) || 0;
-    const persen = base > 0 ? +(nominal / base * 100).toFixed(2) : 0;
-    tDiskonPersen.value = persen;
-    tJumlah.value = Math.max(0, base - nominal);
-  } else if(transEditingField === 'jumlah'){
-    const jumlah = parseFloat(tJumlah.value) || 0;
-    const nominal = Math.max(0, base - jumlah);
-    const persen = base > 0 ? +(nominal / base * 100).toFixed(2) : 0;
-    tDiskonNominal.value = nominal;
-    tDiskonPersen.value = persen;
+// Recomputes diskon/jumlah for one item based on which field the person last typed
+// into (mirrors the old shared-field logic, just applied per-item now).
+function computeItemFromBase(it){
+  const base = (it.qty||0) * (it.harga||0);
+  if(it.editingField === 'persen'){
+    it.diskonNominal = Math.round(base * (it.diskonPersen||0) / 100);
+    it.jumlah = Math.max(0, base - it.diskonNominal);
+  } else if(it.editingField === 'nominal'){
+    it.diskonPersen = base > 0 ? +((it.diskonNominal||0) / base * 100).toFixed(2) : 0;
+    it.jumlah = Math.max(0, base - (it.diskonNominal||0));
+  } else if(it.editingField === 'jumlah'){
+    const nominal = Math.max(0, base - (it.jumlah||0));
+    it.diskonNominal = nominal;
+    it.diskonPersen = base > 0 ? +(nominal / base * 100).toFixed(2) : 0;
   } else {
-    // base changed (qty/harga/produk): keep current persen, recompute nominal & jumlah
-    const persen = parseFloat(tDiskonPersen.value) || 0;
-    const nominal = Math.round(base * persen / 100);
-    tDiskonNominal.value = nominal;
-    tJumlah.value = Math.max(0, base - nominal);
+    it.diskonNominal = Math.round(base * (it.diskonPersen||0) / 100);
+    it.jumlah = Math.max(0, base - it.diskonNominal);
   }
-  renderTransTotals();
+}
+
+// Updates just the sibling number inputs inside one card in place (no full re-render)
+// so typing in one field doesn't steal focus away from itself.
+function syncItemInputs(it){
+  const card = transItemsWrap.querySelector(`.trans-item-card[data-id="${it.id}"]`);
+  if(!card) return;
+  card.querySelector('.ti-harga').value = it.harga;
+  card.querySelector('.ti-diskon-persen').value = it.diskonPersen;
+  card.querySelector('.ti-diskon-nominal').value = it.diskonNominal;
+  card.querySelector('.ti-jumlah').value = it.jumlah;
+}
+
+// Re-applies the currently selected tier/pricelist-version to every card that has a
+// recognized product picked (used when DBP/WBP/Pricelist B toggles, or pricelist data
+// changes) -- does a full re-render since harga is the "base" field for every card.
+function updateAllPricesFromPricelist(){
+  transItems.forEach(it => {
+    const idx = PRODUK_LABEL_MAP.get((it.produkLabel||'').trim());
+    if(idx !== undefined){
+      const price = lookupPrice(PRICELIST[idx]);
+      if(price !== null){
+        it.harga = price;
+        it.editingField = null;
+        computeItemFromBase(it);
+      }
+    }
+  });
+  renderTransItems();
+}
+
+function renderTransItems(){
+  transItemsWrap.innerHTML = transItems.map(it => `
+    <div class="trans-item-card" data-id="${it.id}">
+      <button type="button" class="trans-item-del" data-id="${it.id}" title="Hapus item">&times;</button>
+      <div class="trans-item-row">
+        <div class="ti-field"><span class="trans-item-mini-label">Produk</span><input type="text" class="ti-produk" list="produkDatalistTrans" data-id="${it.id}" value="${(it.produkLabel||'').replace(/"/g,'&quot;')}" placeholder="Ketik nama produk..." autocomplete="off"></div>
+        <div class="ti-field"><span class="trans-item-mini-label">Qty</span><input type="number" class="ti-qty" data-id="${it.id}" min="1" value="${it.qty}"></div>
+        <div class="ti-field"><span class="trans-item-mini-label">Harga Satuan</span><input type="number" class="ti-harga" data-id="${it.id}" min="0" value="${it.harga}"></div>
+        <div class="ti-field"><span class="trans-item-mini-label">Diskon %</span><input type="number" class="ti-diskon-persen" data-id="${it.id}" min="0" max="100" step="0.1" value="${it.diskonPersen}"></div>
+        <div class="ti-field"><span class="trans-item-mini-label">Diskon Nominal</span><input type="number" class="ti-diskon-nominal" data-id="${it.id}" min="0" value="${it.diskonNominal}"></div>
+        <div class="ti-field"><span class="trans-item-mini-label">Harga Akhir</span><input type="number" class="ti-jumlah" data-id="${it.id}" min="0" value="${it.jumlah}"></div>
+      </div>
+    </div>`).join('');
+
+  transItemsWrap.querySelectorAll('.trans-item-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      transItems = transItems.filter(x => x.id !== btn.dataset.id);
+      if(!transItems.length) transItems.push(newTransItem()); // selalu sisakan minimal 1 kartu kosong
+      renderTransItems();
+      renderTransTotals();
+    });
+  });
+  transItemsWrap.querySelectorAll('.ti-produk').forEach(input => {
+    const commit = () => {
+      const it = transItems.find(x => x.id === input.dataset.id);
+      if(!it) return;
+      it.produkLabel = input.value;
+      const idx = PRODUK_LABEL_MAP.get(input.value.trim());
+      if(idx !== undefined){
+        const price = lookupPrice(PRICELIST[idx]);
+        if(price !== null) it.harga = price;
+      }
+      it.editingField = null;
+      computeItemFromBase(it);
+      syncItemInputs(it);
+      renderTransTotals();
+    };
+    input.addEventListener('input', commit);
+    input.addEventListener('change', commit);
+  });
+  transItemsWrap.querySelectorAll('.ti-qty, .ti-harga').forEach(input => {
+    input.addEventListener('input', () => {
+      const it = transItems.find(x => x.id === input.dataset.id);
+      if(!it) return;
+      if(input.classList.contains('ti-qty')) it.qty = parseFloat(input.value) || 0;
+      else it.harga = parseFloat(input.value) || 0;
+      it.editingField = null;
+      computeItemFromBase(it);
+      syncItemInputs(it);
+      renderTransTotals();
+    });
+  });
+  transItemsWrap.querySelectorAll('.ti-diskon-persen').forEach(input => {
+    input.addEventListener('input', () => {
+      const it = transItems.find(x => x.id === input.dataset.id);
+      if(!it) return;
+      it.diskonPersen = parseFloat(input.value) || 0;
+      it.editingField = 'persen';
+      computeItemFromBase(it);
+      syncItemInputs(it);
+      renderTransTotals();
+    });
+  });
+  transItemsWrap.querySelectorAll('.ti-diskon-nominal').forEach(input => {
+    input.addEventListener('input', () => {
+      const it = transItems.find(x => x.id === input.dataset.id);
+      if(!it) return;
+      it.diskonNominal = parseFloat(input.value) || 0;
+      it.editingField = 'nominal';
+      computeItemFromBase(it);
+      syncItemInputs(it);
+      renderTransTotals();
+    });
+  });
+  transItemsWrap.querySelectorAll('.ti-jumlah').forEach(input => {
+    input.addEventListener('input', () => {
+      const it = transItems.find(x => x.id === input.dataset.id);
+      if(!it) return;
+      it.jumlah = parseFloat(input.value) || 0;
+      it.editingField = 'jumlah';
+      computeItemFromBase(it);
+      syncItemInputs(it);
+      renderTransTotals();
+    });
+  });
 }
 
 // ---------- Diskon Keseluruhan (di atas subtotal seluruh item) ----------
-// Subtotal preview = total item yang sudah masuk cart + item yang sedang diketik (belum di-"Tambah Item Lain").
 function getTransSubtotalPreview(){
-  const cartTotal = transCart.reduce((s, it) => s + it.jumlah, 0);
-  const pending = getCurrentLineItem();
-  return cartTotal + (pending ? pending.jumlah : 0);
+  return transItems.reduce((s, it) => s + (it.jumlah||0), 0);
 }
 
 function renderTransTotals(){
@@ -5392,13 +5941,15 @@ function renderTransTotals(){
     tGlobalDiskonNominal.value = nominal;
   }
   const nominalFinal = parseFloat(tGlobalDiskonNominal.value) || 0;
-  const grandTotal = Math.max(0, subtotal - nominalFinal);
+  const ongkirVal = parseFloat(tOngkir.value) || 0;
+  const grandTotal = Math.max(0, subtotal - nominalFinal) + ongkirVal;
   transSubtotalDisplay.textContent = fmtRupiah(subtotal);
   transGrandTotalDisplay.textContent = fmtRupiah(grandTotal);
 }
 
 tGlobalDiskonPersen.addEventListener('input', () => { transGlobalEditingField = 'persen'; renderTransTotals(); });
 tGlobalDiskonNominal.addEventListener('input', () => { transGlobalEditingField = 'nominal'; renderTransTotals(); });
+tOngkir.addEventListener('input', renderTransTotals);
 
 // Distribusi proporsional diskon keseluruhan ke tiap baris item saat disimpan,
 // supaya total per item + diskon keseluruhan tetap konsisten dengan Total Akhir yang tampil.
@@ -5418,84 +5969,13 @@ function distributeGlobalDiscount(lines, globalNominal){
   });
 }
 
-tProduk.addEventListener('change', updateHargaFromPricelist);
-tProduk.addEventListener('input', updateHargaFromPricelist);
-tDbp.addEventListener('change', () => { if(tDbp.checked) tWbp.checked = false; updateHargaFromPricelist(); });
-tWbp.addEventListener('change', () => { if(tWbp.checked) tDbp.checked = false; updateHargaFromPricelist(); });
-tPricelistB.addEventListener('change', updateHargaFromPricelist);
-tQty.addEventListener('input', () => { transEditingField = null; recalcFromBase(); });
-tHarga.addEventListener('input', () => { transEditingField = null; recalcFromBase(); });
-tDiskonPersen.addEventListener('input', () => { transEditingField = 'persen'; recalcFromBase(); });
-tDiskonNominal.addEventListener('input', () => { transEditingField = 'nominal'; recalcFromBase(); });
-tJumlah.addEventListener('input', () => { transEditingField = 'jumlah'; recalcFromBase(); });
-
-// Build the line-item currently shown in the product fields (used both by
-// "+ Tambah Item Lain" and, for the last item, by the final submit).
-function getCurrentLineItem(){
-  const item = getSelectedProdukItem();
-  if(!item) return null;
-  const qty = parseFloat(tQty.value) || 0;
-  const harga = parseFloat(tHarga.value) || 0;
-  const jumlah = parseFloat(tJumlah.value) || 0;
-  const diskonPersen = parseFloat(tDiskonPersen.value) || 0;
-  const diskonNominal = parseFloat(tDiskonNominal.value) || 0;
-  if(qty <= 0) return null;
-  const namaProduk = [item.produk, item.size, item.kemasan].filter(Boolean).join(' ');
-  return { namaProduk, qty, harga, jumlah, diskonPersen, diskonNominal };
-}
-
-function renderTransCart(){
-  const hasItems = transCart.length > 0;
-  transCartWrap.hidden = !hasItems;
-  if(!hasItems){ transCartBody.innerHTML = ''; return; }
-  const total = transCart.reduce((s,it) => s + it.jumlah, 0);
-  transCartBody.innerHTML = transCart.map((it, idx) => `
-    <tr>
-      <td>${it.namaProduk}</td>
-      <td class="num">${it.qty}</td>
-      <td class="num">${fmtRupiah(it.harga)}</td>
-      <td class="num">${it.diskonPersen || 0}%</td>
-      <td class="num">${fmtRupiah(it.diskonNominal || 0)}</td>
-      <td class="num">${fmtRupiah(it.jumlah)}</td>
-      <td><button type="button" class="trans-cart-del" data-idx="${idx}" title="Hapus item">&times;</button></td>
-    </tr>`).join('') + `
-    <tr class="trans-cart-total-row">
-      <td colspan="5">Subtotal (${transCart.length} item)</td>
-      <td class="num">${fmtRupiah(total)}</td>
-      <td></td>
-    </tr>`;
-  transCartBody.querySelectorAll('.trans-cart-del').forEach(btn => {
-    btn.addEventListener('click', () => {
-      transCart.splice(+btn.dataset.idx, 1);
-      renderTransCart();
-    });
-  });
-  renderTransTotals();
-}
-
-// Clears only the product/qty/price fields so the next item can be picked,
-// keeping Sales/Tanggal/Konsumen/Tipe Outlet as-is for the same transaction.
-function resetProdukLineFields(){
-  tQty.value = 1;
-  tDiskonPersen.value = 0; tDiskonNominal.value = 0;
-  transEditingField = null;
-  tProduk.value = '';
-  tHarga.value = '';
-  updateHargaFromPricelist();
-}
+tDbp.addEventListener('change', () => { if(tDbp.checked) tWbp.checked = false; updateAllPricesFromPricelist(); renderTransTotals(); });
+tWbp.addEventListener('change', () => { if(tWbp.checked) tDbp.checked = false; updateAllPricesFromPricelist(); renderTransTotals(); });
+tPricelistB.addEventListener('change', () => { updateAllPricesFromPricelist(); renderTransTotals(); });
 
 transAddItemBtn.addEventListener('click', () => {
-  const line = getCurrentLineItem();
-  if(!line){
-    transFormStatusEl.textContent = 'Pilih produk & qty yang valid dulu sebelum menambah item.';
-    transFormStatusEl.className = 'form-status err';
-    return;
-  }
-  transCart.push(line);
-  renderTransCart();
-  resetProdukLineFields();
-  transFormStatusEl.textContent = 'Item ditambahkan ke daftar ✓ — pilih produk berikutnya atau simpan transaksi.';
-  transFormStatusEl.className = 'form-status ok';
+  transItems.push(newTransItem());
+  renderTransItems();
 });
 
 function resetTransForm(){
@@ -5505,14 +5985,12 @@ function resetTransForm(){
   tKonsumen.value = '';
   tTipeOutlet.value = '';
   tDbp.checked = false; tWbp.checked = false; tPricelistB.checked = false;
-  tQty.value = 1;
-  tDiskonPersen.value = 0; tDiskonNominal.value = 0;
   tGlobalDiskonPersen.value = 0; tGlobalDiskonNominal.value = 0;
   transGlobalEditingField = null;
+  tOngkir.value = 0;
   tKeterangan.value = '';
-  transEditingField = null;
-  transCart = [];
-  renderTransCart();
+  transItems = [newTransItem()];
+  renderTransItems();
   populateProdukDropdown();
   transFormStatusEl.textContent = '';
   transFormStatusEl.className = 'form-status';
@@ -5570,11 +6048,17 @@ document.getElementById('transForm').addEventListener('submit', async (e) => {
     return;
   }
 
-  // Include whatever is still sitting in the product fields as the final item,
-  // on top of anything already added via "+ Tambah Item Lain".
-  const pendingLine = getCurrentLineItem();
-  const lines = [...transCart];
-  if(pendingLine) lines.push(pendingLine);
+  // Cuma kartu yang produknya valid (dipilih dari daftar pricelist) & qty > 0 yang
+  // ikut disimpan -- kartu kosong yang belum diisi otomatis dilewati, tidak perlu
+  // dihapus manual dulu sebelum submit.
+  const lines = transItems
+    .filter(it => it.produkLabel && PRODUK_LABEL_MAP.has(it.produkLabel.trim()) && (it.qty||0) > 0)
+    .map(it => {
+      const idx = PRODUK_LABEL_MAP.get(it.produkLabel.trim());
+      const item = PRICELIST[idx];
+      const namaProduk = [item.produk, item.size, item.kemasan].filter(Boolean).join(' ');
+      return { namaProduk, qty: it.qty, harga: it.harga, jumlah: it.jumlah, diskonPersen: it.diskonPersen, diskonNominal: it.diskonNominal };
+    });
 
   if(!lines.length){
     transFormStatusEl.textContent = 'Pilih produk terlebih dahulu.';
@@ -5587,7 +6071,13 @@ document.getElementById('transForm').addEventListener('submit', async (e) => {
 
   const globalPersenVal = parseFloat(tGlobalDiskonPersen.value) || 0;
   const globalNominalVal = parseFloat(tGlobalDiskonNominal.value) || 0;
-  const finalLines = distributeGlobalDiscount(lines, globalNominalVal);
+  const ongkirVal = parseFloat(tOngkir.value) || 0;
+  let finalLines = distributeGlobalDiscount(lines, globalNominalVal);
+  // Ongkos kirim dicatat sebagai baris tersendiri (bukan ikut didiskon proporsional
+  // seperti item produk) supaya nominalnya persis seperti yang diketik.
+  if(ongkirVal > 0){
+    finalLines = finalLines.concat([{ namaProduk: 'Ongkos Kirim', qty: 1, harga: ongkirVal, jumlah: ongkirVal, diskonPersen: 0, diskonNominal: 0 }]);
+  }
   const keteranganToSave = globalNominalVal > 0
     ? (keterangan ? keterangan + ' — ' : '') + `Diskon keseluruhan ${globalPersenVal}% (Rp${globalNominalVal.toLocaleString('id-ID')})`
     : keterangan;
@@ -5960,6 +6450,7 @@ async function loadAllFromSheets(){
   const scheduleUrl = dsScheduleUrlEl.value.trim();
   const pricelistUrl = dsPricelistUrlEl.value.trim();
   const manualFuUrl = dsManualFuUrlEl.value.trim();
+  const targetUrl = dsTargetUrlEl.value.trim();
 
   const parts = [];
   try{
@@ -5968,26 +6459,21 @@ async function loadAllFromSheets(){
       await syncFromGoogleSheets(visitUrl, transUrl, masterUrl, true);
       parts.push('data utama');
     }
-    if(scheduleUrl){
-      statusEl.textContent = 'Membaca JADWAL MINGGUAN (semua minggu)...';
-      const r = await pullAllScheduleFromSheets();
-      if(r.ok) parts.push(`jadwal (${r.weeks} minggu)`);
-    }
-    if(pricelistUrl){
-      statusEl.textContent = 'Membaca PRICELIST...';
-      await pullPricelistFromSheets();
-      parts.push('pricelist');
-    }
-    if(manualFuUrl){
-      statusEl.textContent = 'Membaca CATATAN FOLLOWUP...';
-      const fuR = await pullManualFollowupsFromSheets();
-      if(fuR.ok) parts.push(`follow up (${fuR.count})`);
-    }
-    const targetUrl = dsTargetUrlEl.value.trim();
-    if(targetUrl){
-      statusEl.textContent = 'Membaca TARGET...';
-      const tR = await pullTargetsFromSheets();
-      if(tR.ok) parts.push(`target (${tR.count})`);
+    // Sheet pendukung dibaca BARENGAN (Promise.all), bukan satu-satu berurutan --
+    // semuanya independen jadi tidak perlu nunggu gantian; total waktu tunggu jadi
+    // sekitar selambat-lambatnya satu sheet, bukan jumlah keempat-empatnya.
+    if(scheduleUrl || pricelistUrl || manualFuUrl || targetUrl){
+      statusEl.textContent = 'Membaca Jadwal Mingguan, Pricelist, Follow Up & Target...';
+      const [scheduleR, , fuR, targetR] = await Promise.all([
+        scheduleUrl ? pullAllScheduleFromSheets() : Promise.resolve(null),
+        pricelistUrl ? pullPricelistFromSheets() : Promise.resolve(null),
+        manualFuUrl ? pullManualFollowupsFromSheets() : Promise.resolve(null),
+        targetUrl ? pullTargetsFromSheets() : Promise.resolve(null),
+      ]);
+      if(scheduleUrl && scheduleR && scheduleR.ok) parts.push(`jadwal (${scheduleR.weeks} minggu)`);
+      if(pricelistUrl) parts.push('pricelist');
+      if(manualFuUrl && fuR && fuR.ok) parts.push(`follow up (${fuR.count})`);
+      if(targetUrl && targetR && targetR.ok) parts.push(`target (${targetR.count})`);
     }
     return { ok:true, parts };
   } catch(err){
