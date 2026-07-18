@@ -258,6 +258,62 @@
   .outlet-sales-pivot th.sortable-col{cursor:pointer;user-select:none;}
   .outlet-sales-pivot th.sortable-col:hover{color:var(--ink);}
 
+  .promo-result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
+  .promo-result-chip{background:var(--surface-2);border-radius:8px;padding:12px;text-align:center;}
+  .promo-result-chip span{display:block;font-family:var(--font-mono);font-size:9.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.04em;margin-bottom:6px;}
+  .promo-result-chip b{font-size:17px;color:var(--ink);font-weight:700;}
+  .promo-result-chip.discount b{color:var(--alert);}
+  .promo-bundle-item{position:relative;border:1px solid var(--line);border-radius:8px;padding:10px 34px 10px 10px;margin-bottom:8px;display:grid;grid-template-columns:2fr 100px 80px;gap:10px;}
+  .promo-bundle-item .trans-item-del{position:absolute;top:8px;right:8px;}
+
+  .promo-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+  .promo-card{border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;background:var(--surface);}
+  .promo-card:hover{border-color:var(--teal);}
+  .promo-card-head{display:flex;justify-content:space-between;align-items:start;gap:8px;margin-bottom:6px;}
+  .promo-card-nama{font-weight:700;font-size:14px;}
+  .promo-card-type{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;color:var(--ink-dim);background:var(--surface-2);padding:2px 8px;border-radius:20px;white-space:nowrap;}
+  .promo-card-ringkasan{color:var(--ink-dim);font-size:12px;margin-bottom:10px;min-height:16px;}
+  .promo-card-prices{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
+  .promo-card-prices .old{text-decoration:line-through;color:var(--ink-dim);font-size:12px;}
+  .promo-card-prices .new{color:var(--green);font-weight:700;font-family:var(--font-mono);}
+  .promo-card-foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-dim);}
+  .promo-card-status{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+  .promo-card-status.aktif{background:var(--amber-soft);color:var(--amber);}
+  .promo-card-status.selesai{background:var(--green-soft);color:var(--green);}
+  .promo-outlet-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .promo-outlet-tag{display:flex;align-items:center;gap:4px;background:var(--surface-2);border-radius:20px;padding:4px 6px 4px 12px;font-size:12px;}
+  .promo-outlet-tag button{background:none;border:none;color:var(--alert);cursor:pointer;padding:2px 6px;font-size:14px;line-height:1;}
+
+  .promo-subhead{margin-bottom:10px;}
+  .promo-subhead h3{font-size:15px;margin:0;}
+
+  .promo-list-item{position:relative;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;padding:10px 34px 10px 12px;margin-bottom:8px;background:var(--surface);}
+  .promo-list-item-main{flex:1;min-width:160px;}
+  .promo-list-item-main b{display:block;font-size:13px;margin-bottom:2px;}
+  .promo-list-item-main span{display:block;font-size:11.5px;color:var(--ink-dim);}
+  .promo-list-item-price{display:flex;align-items:baseline;gap:8px;font-size:12px;white-space:nowrap;}
+  .promo-list-item-price .old{text-decoration:line-through;color:var(--ink-dim);}
+  .promo-list-item-price .new{color:var(--green);font-weight:700;font-family:var(--font-mono);}
+  .promo-list-item-price .pct{color:var(--alert);font-family:var(--font-mono);}
+  .promo-list-item .trans-item-del{position:absolute;top:8px;right:8px;}
+
+  .promo-gimmick-paket{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px;background:var(--surface);}
+  .promo-gimmick-paket-head{display:grid;grid-template-columns:1fr 1fr 30px;gap:8px;margin-bottom:10px;align-items:center;}
+  .promo-gimmick-items{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+  .promo-gimmick-item-row{position:relative;display:grid;grid-template-columns:2fr 70px 110px 100px;gap:8px;align-items:center;padding-right:30px;}
+  .promo-gimmick-item-row .trans-item-del{position:absolute;top:2px;right:0;}
+  .promo-gimmick-item-row .pgi-subtotal{font-family:var(--font-mono);font-size:12px;text-align:right;color:var(--ink-dim);}
+  .promo-gimmick-paket-total{text-align:right;font-size:12.5px;color:var(--ink-dim);border-top:1px dashed var(--line);padding-top:8px;margin-top:4px;}
+  .promo-gimmick-paket-total b{color:var(--ink);font-family:var(--font-mono);}
+
+  .promo-detail-promo-card{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px;}
+  .promo-detail-promo-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+  .promo-detail-promo-head b{font-size:13px;}
+  .promo-detail-promo-head span{font-size:11.5px;color:var(--ink-dim);}
+  .promo-eval-grid{display:grid;grid-template-columns:140px 1fr 1fr;gap:8px;align-items:center;}
+  .promo-eval-grid select, .promo-eval-grid input{width:100%;font-family:var(--font-body);font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);}
+  @media(max-width:700px){ .promo-eval-grid{grid-template-columns:1fr;} }
+
   .modal-card-xwide{max-width:1180px;}
   #weeklyScheduleOverlay .modal-card{max-height:94vh;}
   .schedule-weeknav{
@@ -916,6 +972,9 @@
             <label class="ds-label">Link CSV — TARGET (opsional)</label>
             <input type="text" id="dsTargetUrl" class="ds-input" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
             <p class="ds-desc" style="margin-top:4px;">Sheet baru khusus target sales (kolom: KEY, SALES, PERIODE, TARGET_OMZET, TARGET_CALL, TARGET_EC, TARGET_NOO) — dipakai tombol "Muat/Sync ke Sheets" di Target Sales.</p>
+            <label class="ds-label">Link CSV — PENGAJUAN (opsional)</label>
+            <input type="text" id="dsPromoUrl" class="ds-input" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+            <p class="ds-desc" style="margin-top:4px;">Sheet baru khusus Pengajuan Biaya Marketing (kolom: KEY, PIC, KETERANGAN, PERIODE_MULAI, PERIODE_SELESAI, TARGET_PENJUALAN, PROMOS_JSON, GIMMICKS_JSON, TTD_DIBUAT_NAMA, TTD_DIBUAT_JABATAN, TTD_TAHU_NAMA, TTD_TAHU_JABATAN, TTD_SETUJU_NAMA, TTD_SETUJU_JABATAN, OUTLETS, STATUS, TANGGAL_DIBUAT, EVAL_OMZET_AKTUAL, EVAL_TRANSAKSI, EVAL_PENGUNJUNG, EVAL_APA_BERHASIL, EVAL_PERLU_DIPERBAIKI, EVAL_RENCANA, EVAL_TANGGAL) — dipakai fitur Kalkulator Promo.</p>
             <label class="ds-checkrow"><input type="checkbox" id="dsAutoRefresh"> Auto-refresh tiap 5 menit</label>
             <div class="ds-actions">
               <button class="ds-btn-primary" id="dsLoadBtn" type="button">Simpan &amp; Muat</button>
@@ -953,6 +1012,7 @@
     <button class="main-tab active" id="tabBtnDashboard" type="button">&#128202; Dashboard</button>
     <button class="main-tab" id="tabBtnTransaksi" type="button">&#129534; Transaksi</button>
     <button class="main-tab" id="tabBtnOutletSales" type="button">&#127970; Penjualan Outlet</button>
+    <button class="main-tab" id="tabBtnPromo" type="button">&#127991; Kalkulator Promo</button>
     <button class="main-tab" id="tabBtnFollowUp" type="button">&#128203; Follow Up <span class="tab-notif-badge" id="fuNotifBadge" hidden>0</span></button>
   </div>
 
@@ -1245,6 +1305,198 @@
     </section>
   </div>
 
+  <div class="tab-panel" id="tabPanelPromo" hidden>
+    <section>
+      <div class="section-head">
+        <span class="idx">01</span><h2>Pengajuan Biaya Marketing</h2>
+      </div>
+      <p class="ds-desc">Susun promo &amp; gimmick untuk satu event/periode sekaligus — harga produk otomatis dari Pricelist. Setelah disimpan bisa didownload sebagai PDF pengajuan, disisipkan ke outlet tertentu, dan dievaluasi hasilnya setelah berjalan.</p>
+
+      <div class="card">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>PIC / Marketing</label>
+            <input type="text" id="promoPic" placeholder="mis. Pandu">
+          </div>
+          <div class="form-field form-field-wide">
+            <label>Keterangan / Nama Program</label>
+            <input type="text" id="promoKeterangan" placeholder="mis. Event Cooking Demo Plampitan">
+          </div>
+          <div class="form-field">
+            <label>Periode Mulai</label>
+            <input type="date" id="promoPeriodeMulai">
+          </div>
+          <div class="form-field">
+            <label>Periode Selesai</label>
+            <input type="date" id="promoPeriodeSelesai">
+          </div>
+          <div class="form-field">
+            <label>Target Penjualan (Rp)</label>
+            <input type="number" id="promoTargetPenjualan" min="0" placeholder="0">
+          </div>
+        </div>
+        <div class="detail-section" style="margin-top:4px;">
+          <div class="detail-section-title">Tanda Tangan &amp; Persetujuan</div>
+          <div class="form-grid">
+            <div class="form-field"><label>Dibuat Oleh (Nama)</label><input type="text" id="promoTtdDibuatNama" placeholder="mis. Pandu K"></div>
+            <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdDibuatJabatan" placeholder="mis. Head of Sales &amp; Marketing"></div>
+            <div class="form-field"><label>Mengetahui (Nama)</label><input type="text" id="promoTtdTahuNama" placeholder="mis. Suwarni"></div>
+            <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdTahuJabatan" placeholder="mis. Head of Finance"></div>
+            <div class="form-field"><label>Disetujui Oleh (Nama)</label><input type="text" id="promoTtdSetujuNama" placeholder="mis. Jeannie R"></div>
+            <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdSetujuJabatan" placeholder="mis. Director"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="promo-subhead"><h3>Daftar Promo</h3></div>
+        <div class="form-grid">
+          <div class="form-field form-field-wide">
+            <label>Nama Promo Ini</label>
+            <input type="text" id="promoItemNama" placeholder="mis. Bundling Dry Rub, Diskon 5%...">
+          </div>
+          <div class="form-field">
+            <label>Est. Qty <span style="color:var(--ink-dim);font-weight:400;">(buat estimasi biaya)</span></label>
+            <input type="number" id="promoEstQty" min="1" value="1">
+          </div>
+          <div class="form-field form-field-wide">
+            <label>Tipe Harga (berlaku untuk kalkulator di bawah)</label>
+            <div class="trans-tier-row">
+              <label class="trans-check"><input type="checkbox" id="promoDbp"> Distributor (DBP)</label>
+              <label class="trans-check"><input type="checkbox" id="promoWbp"> Grosir (WBP)</label>
+              <label class="trans-check"><input type="checkbox" id="promoPricelistB"> Pakai Pricelist B</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="pill-group-mini" id="promoTypePills" style="margin:16px 0 4px;">
+          <button type="button" class="pill-mini active" data-type="diskon">Diskon</button>
+          <button type="button" class="pill-mini" data-type="bxgy">Beli X Gratis Y</button>
+          <button type="button" class="pill-mini" data-type="bundling">Bundling</button>
+          <button type="button" class="pill-mini" data-type="minbeli">Min. Pembelian</button>
+        </div>
+
+        <div id="promoTypeBody"></div>
+
+        <div class="promo-result-grid" id="promoResultGrid">
+          <div class="promo-result-chip"><span>Harga Normal</span><b id="promoResHargaNormal">—</b></div>
+          <div class="promo-result-chip"><span>Harga Promo</span><b id="promoResHargaPromo">—</b></div>
+          <div class="promo-result-chip"><span>Nilai Diskon</span><b id="promoResNilaiDiskon">—</b></div>
+          <div class="promo-result-chip"><span>% Diskon</span><b id="promoResPersenDiskon">—</b></div>
+        </div>
+
+        <div class="form-actions" style="border-top:none;padding-top:16px;">
+          <span class="form-status" id="promoAddStatus"></span>
+          <button type="button" class="ds-btn-secondary" id="promoAddToListBtn">&#43; Tambah ke Daftar Promo</button>
+        </div>
+
+        <div id="promoListWrap" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="promo-subhead"><h3>&#127873; Gimmick / Hampers</h3></div>
+        <div id="promoGimmickWrap"></div>
+        <button type="button" class="ds-btn-secondary" id="promoGimmickAddPaketBtn" style="margin-top:6px;">&#43; Tambah Paket Gimmick</button>
+      </div>
+
+      <div class="card">
+        <div class="promo-result-grid" id="promoSummaryGrid">
+          <div class="promo-result-chip"><span>Est. Biaya Diskon</span><b id="promoSumBiayaDiskon">Rp 0</b></div>
+          <div class="promo-result-chip"><span>Biaya Gimmick</span><b id="promoSumBiayaGimmick">Rp 0</b></div>
+          <div class="promo-result-chip"><span>Total Biaya Marketing</span><b id="promoSumTotalBiaya">Rp 0</b></div>
+          <div class="promo-result-chip discount"><span>Cost Ratio (vs Target)</span><b id="promoSumCostRatio">—</b></div>
+        </div>
+        <div class="form-actions" style="border-top:none;padding-top:16px;">
+          <span class="form-status" id="promoSaveStatus"></span>
+          <button type="button" class="ds-btn-secondary" id="promoResetBtn">Bersihkan</button>
+          <button type="button" class="ds-btn-primary form-submit-btn" id="promoSaveBtn">&#128190; Simpan Pengajuan</button>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><span class="idx">02</span><h2>Pengajuan Tersimpan</h2></div>
+      <p class="ds-desc">Klik kartu untuk download PDF, sisipkan ke outlet tertentu, dan isi evaluasi hasilnya setelah promo berjalan.</p>
+      <div class="promo-cards-grid" id="promoCardsWrap"></div>
+    </section>
+  </div>
+
+  <div class="modal-overlay" id="promoDetailOverlay" hidden>
+    <div class="modal-card modal-card-wide">
+      <div class="modal-head">
+        <h2 id="promoDetailTitle">Detail Pengajuan</h2>
+        <button class="modal-close" id="promoDetailClose" type="button">&times;</button>
+      </div>
+      <div class="outlet-history-summary" id="promoDetailSummary"></div>
+
+      <div class="form-actions" style="border-top:none;padding-top:6px;padding-bottom:6px;">
+        <div class="spacer"></div>
+        <button type="button" class="ds-btn-secondary" id="promoDetailPdfBtn">&#128196; Download PDF Pengajuan</button>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Daftar Promo &amp; Evaluasi per Promo</div>
+        <div id="promoDetailPromoList"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Outlet yang Disisipkan Promo Ini</div>
+        <div class="field-with-add">
+          <input type="text" id="promoDetailOutletInput" list="outletMasterList" placeholder="Cari &amp; pilih outlet..." autocomplete="off">
+          <button type="button" class="field-add-btn" id="promoDetailOutletAddBtn" title="Tambah outlet">&#43;</button>
+        </div>
+        <div class="promo-outlet-tags" id="promoDetailOutletList"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Evaluasi Keseluruhan</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Status</label>
+            <select id="promoDetailStatus">
+              <option value="aktif">Aktif / Berjalan</option>
+              <option value="selesai">Selesai</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Omzet Aktual (Rp)</label>
+            <input type="number" id="promoDetailOmzetAktual" min="0" placeholder="0">
+          </div>
+          <div class="form-field">
+            <label>Jumlah Transaksi</label>
+            <input type="number" id="promoDetailTransaksi" min="0" placeholder="0">
+          </div>
+          <div class="form-field">
+            <label>Jumlah Pengunjung</label>
+            <input type="number" id="promoDetailPengunjung" min="0" placeholder="0">
+          </div>
+          <div class="form-field form-field-wide">
+            <label>Apa yang Berhasil</label>
+            <textarea id="promoDetailApaBerhasil" rows="2" placeholder="mis. promo mana yang paling laris..."></textarea>
+          </div>
+          <div class="form-field form-field-wide">
+            <label>Perlu Diperbaiki</label>
+            <textarea id="promoDetailPerluDiperbaiki" rows="2" placeholder="mis. kendala yang ditemui..."></textarea>
+          </div>
+          <div class="form-field form-field-wide">
+            <label>Rencana Berikutnya</label>
+            <textarea id="promoDetailRencana" rows="2" placeholder="mis. ide promo untuk periode depan..."></textarea>
+          </div>
+        </div>
+        <div class="promo-result-grid" id="promoDetailKpiGrid" style="margin-top:14px;">
+          <div class="promo-result-chip"><span>Cost Ratio Realisasi</span><b id="promoDetailKpiCostRatio">—</b></div>
+          <div class="promo-result-chip"><span>ROI Marketing</span><b id="promoDetailKpiRoi">—</b></div>
+          <div class="promo-result-chip"><span>Conversion Rate</span><b id="promoDetailKpiConversion">—</b></div>
+        </div>
+        <div class="form-actions">
+          <span class="form-status" id="promoDetailStatusMsg"></span>
+          <button type="button" class="ds-btn-secondary" id="promoDetailDeleteBtn" style="color:var(--alert);">Hapus Pengajuan</button>
+          <button type="button" class="ds-btn-primary form-submit-btn" id="promoDetailSaveBtn">Simpan Evaluasi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="outletSalesDetailOverlay" hidden>
     <div class="modal-card modal-card-wide">
       <div class="modal-head">
@@ -1375,13 +1627,14 @@
         <li>Buat juga sheet baru bernama persis <b>PRICELIST</b>, header: <code>KEY</code>, <code>KATEGORI</code>, <code>KEMASAN</code>, <code>PRODUK</code>, <code>SIZE</code>, <code>QTY_KARTON</code>, <code>A_DBP</code>, <code>A_WBP</code>, <code>A_RBP</code>, <code>B_DBP</code>, <code>B_WBP</code>, <code>B_RBP</code>.</li>
         <li>Buat juga sheet baru bernama persis <b>CATATAN FOLLOWUP</b>, header: <code>KEY</code>, <code>TANGGAL</code>, <code>SALES</code>, <code>OUTLET</code>, <code>KETERANGAN</code>, <code>RESOLVED</code> (kolom <code>OUTLET_KEY</code> ditambahkan otomatis).</li>
         <li>Buat juga sheet baru bernama persis <b>TARGET</b>, header: <code>KEY</code>, <code>SALES</code>, <code>PERIODE</code>, <code>TARGET_OMZET</code>, <code>TARGET_CALL</code>, <code>TARGET_EC</code>, <code>TARGET_NOO</code> — dipakai fitur Target Sales.</li>
+        <li>Buat juga sheet baru bernama persis <b>PENGAJUAN</b>, header: <code>KEY</code>, <code>PIC</code>, <code>KETERANGAN</code>, <code>PERIODE_MULAI</code>, <code>PERIODE_SELESAI</code>, <code>TARGET_PENJUALAN</code>, <code>PROMOS_JSON</code>, <code>GIMMICKS_JSON</code>, <code>TTD_DIBUAT_NAMA</code>, <code>TTD_DIBUAT_JABATAN</code>, <code>TTD_TAHU_NAMA</code>, <code>TTD_TAHU_JABATAN</code>, <code>TTD_SETUJU_NAMA</code>, <code>TTD_SETUJU_JABATAN</code>, <code>OUTLETS</code>, <code>STATUS</code>, <code>TANGGAL_DIBUAT</code>, <code>EVAL_OMZET_AKTUAL</code>, <code>EVAL_TRANSAKSI</code>, <code>EVAL_PENGUNJUNG</code>, <code>EVAL_APA_BERHASIL</code>, <code>EVAL_PERLU_DIPERBAIKI</code>, <code>EVAL_RENCANA</code>, <code>EVAL_TANGGAL</code> — dipakai fitur Kalkulator Promo (Pengajuan Biaya Marketing). Kolom <code>PROMOS_JSON</code> dan <code>GIMMICKS_JSON</code> isinya teks JSON (daftar promo/gimmick di pengajuan itu, termasuk evaluasi per-promonya) — jangan diedit manual di sheet, cukup dibiarkan apa adanya.</li>
         <li>Buka <b>Extensions → Apps Script</b> dari spreadsheet Anda.</li>
         <li>Hapus isi default, lalu tempel kode di bawah ini.</li>
         <li>(Opsional) Ganti nilai <code>SECRET</code> dengan kode rahasia Anda sendiri, lalu isi kode yang sama di panel "Sumber Data" pada dashboard.</li>
         <li>Klik <b>Deploy → New deployment</b> → pilih tipe <b>Web app</b>.</li>
         <li>Execute as: <b>Me</b>. Who has access: <b>Anyone</b>. Klik <b>Deploy</b>, lalu izinkan (Authorize) saat diminta.</li>
-        <li>Salin URL Web App yang muncul (diakhiri <code>/exec</code>), tempel di panel "Sumber Data" → "URL Apps Script (Web App)". URL yang sama ini dipakai untuk Input Kunjungan, Kelola Outlet, Jadwal Mingguan, Pricelist, dan Target Sales.</li>
-        <li>Publish sheet MASTER OUTLET, JADWAL MINGGUAN, PRICELIST, CATATAN FOLLOWUP, dan TARGET juga ke web sebagai CSV (sama seperti LOG VISIT/TRANSAKSI), lalu tempel link-nya masing-masing di panel Sumber Data supaya dashboard bisa <i>membaca</i> data itu juga (bukan cuma menulis).</li>
+        <li>Salin URL Web App yang muncul (diakhiri <code>/exec</code>), tempel di panel "Sumber Data" → "URL Apps Script (Web App)". URL yang sama ini dipakai untuk Input Kunjungan, Kelola Outlet, Jadwal Mingguan, Pricelist, Target Sales, dan Kalkulator Promo.</li>
+        <li>Publish sheet MASTER OUTLET, JADWAL MINGGUAN, PRICELIST, CATATAN FOLLOWUP, TARGET, dan PENGAJUAN juga ke web sebagai CSV (sama seperti LOG VISIT/TRANSAKSI), lalu tempel link-nya masing-masing di panel Sumber Data supaya dashboard bisa <i>membaca</i> data itu juga (bukan cuma menulis).</li>
         <li><b>Kalau sheet Anda sudah punya data lama</b> (sebelum pakai versi KEY ID ini): di editor Apps Script, pilih fungsi <code>migrateAddOutletKeys</code> dari dropdown atas, lalu klik <b>Run</b> — sekali saja. Ini mengisi <code>OUTLET_KEY</code>/<code>KEY</code> untuk semua baris lama berdasar nama outlet yang sudah ada.</li>
       </ol>
       <pre class="code-block" id="appsScriptCode"></pre>
@@ -1756,19 +2009,10 @@ function showOverlay(el){
 // smooths this over instead of surfacing a scary error for what's usually a one-off.
 async function fetchWithRetry(url, options, retries){
   if(retries === undefined) retries = 2;
-  // Panggilan ke Apps Script (script.google.com) dialihkan lewat proxy
-  // /api/gas-proxy di domain yang sama, supaya browser tidak pernah langsung
-  // request cross-origin ke Google -- jadi tidak kena aturan CORS sama sekali.
-  // Proxy-nya sendiri (server Vercel -> Google) tidak terikat CORS karena itu
-  // request server-ke-server, bukan dari browser.
-  let actualUrl = url;
-  if(typeof url === 'string' && url.indexOf('script.google.com') !== -1){
-    actualUrl = '/api/gas-proxy?url=' + encodeURIComponent(url);
-  }
   let lastErr;
   for(let attempt = 0; attempt <= retries; attempt++){
     try{
-      return await fetch(actualUrl, options);
+      return await fetch(url, options);
     } catch(err){
       lastErr = err;
       if(attempt < retries) await new Promise(r => setTimeout(r, 700 * (attempt + 1)));
@@ -3114,6 +3358,7 @@ const dsScheduleUrlEl = document.getElementById('dsScheduleUrl');
 const dsPricelistUrlEl = document.getElementById('dsPricelistUrl');
 const dsManualFuUrlEl = document.getElementById('dsManualFuUrl');
 const dsTargetUrlEl = document.getElementById('dsTargetUrl');
+const dsPromoUrlEl = document.getElementById('dsPromoUrl');
 const dsAutoFullSyncEl = document.getElementById('dsAutoFullSync');
 const dsAutoFullSyncIntervalEl = document.getElementById('dsAutoFullSyncInterval');
 const dsAutoRefreshEl = document.getElementById('dsAutoRefresh');
@@ -3129,7 +3374,7 @@ const dsFileWarningEl = document.getElementById('dsFileWarning');
 // saja tapi tidak ikut tersimpan -- jadi hilang lagi begitu halaman di-reload, dan
 // auto-load saat buka halaman jadi tidak nemu apa-apa. Sekarang tiap field di panel
 // Sumber Data auto-tersimpan begitu selesai diketik (blur), apapun tombol yang dipakai.
-[dsVisitUrlEl, dsTransUrlEl, dsMasterUrlEl, dsScheduleUrlEl, dsPricelistUrlEl, dsManualFuUrlEl, dsTargetUrlEl, dsWriteUrlEl, dsWriteSecretEl]
+[dsVisitUrlEl, dsTransUrlEl, dsMasterUrlEl, dsScheduleUrlEl, dsPricelistUrlEl, dsManualFuUrlEl, dsTargetUrlEl, dsPromoUrlEl, dsWriteUrlEl, dsWriteSecretEl]
   .forEach(el => el.addEventListener('blur', () => persistConfig()));
 const isFileProtocol = window.location.protocol === 'file:';
 if(isFileProtocol){
@@ -3179,6 +3424,7 @@ function persistConfig(){
     pricelistUrl: dsPricelistUrlEl.value.trim(),
     manualFuUrl: dsManualFuUrlEl.value.trim(),
     targetUrl: dsTargetUrlEl.value.trim(),
+    promoUrl: dsPromoUrlEl.value.trim(),
     autoFullSync: dsAutoFullSyncEl.checked,
     autoFullSyncInterval: dsAutoFullSyncIntervalEl.value,
     autoRefresh: dsAutoRefreshEl.checked,
@@ -3356,6 +3602,7 @@ dsAutoFullSyncIntervalEl.addEventListener('change', () => { persistConfig(); set
     if(cfg.pricelistUrl) dsPricelistUrlEl.value = cfg.pricelistUrl;
     if(cfg.manualFuUrl) dsManualFuUrlEl.value = cfg.manualFuUrl;
     if(cfg.targetUrl) dsTargetUrlEl.value = cfg.targetUrl;
+    if(cfg.promoUrl) dsPromoUrlEl.value = cfg.promoUrl;
     if(cfg.autoFullSyncInterval) dsAutoFullSyncIntervalEl.value = cfg.autoFullSyncInterval;
     dsAutoFullSyncEl.checked = !!cfg.autoFullSync;
     setupAutoFullSync();
@@ -3380,6 +3627,7 @@ dsAutoFullSyncIntervalEl.addEventListener('change', () => { persistConfig(); set
         if(cfg.pricelistUrl) tasks.push(pullPricelistFromSheets());
         if(cfg.manualFuUrl) tasks.push(pullManualFollowupsFromSheets());
         if(cfg.targetUrl) tasks.push(pullTargetsFromSheets());
+        if(cfg.promoUrl) tasks.push(pullPromosFromSheets());
         if(tasks.length){
           await Promise.all(tasks);
           renderAll();
@@ -5669,22 +5917,28 @@ const tabBtnFollowUp = document.getElementById('tabBtnFollowUp');
 const tabPanelFollowUp = document.getElementById('tabPanelFollowUp');
 const tabBtnOutletSales = document.getElementById('tabBtnOutletSales');
 const tabPanelOutletSales = document.getElementById('tabPanelOutletSales');
+const tabBtnPromo = document.getElementById('tabBtnPromo');
+const tabPanelPromo = document.getElementById('tabPanelPromo');
 function switchTab(tab){
   tabBtnDashboard.classList.toggle('active', tab==='dashboard');
   tabBtnTransaksi.classList.toggle('active', tab==='transaksi');
   tabBtnFollowUp.classList.toggle('active', tab==='followup');
   tabBtnOutletSales.classList.toggle('active', tab==='outletsales');
+  tabBtnPromo.classList.toggle('active', tab==='promo');
   tabPanelDashboard.hidden = tab!=='dashboard';
   tabPanelTransaksi.hidden = tab!=='transaksi';
   tabPanelFollowUp.hidden = tab!=='followup';
   tabPanelOutletSales.hidden = tab!=='outletsales';
+  tabPanelPromo.hidden = tab!=='promo';
   if(tab==='followup') renderFollowUpTable();
   if(tab==='outletsales') renderOutletSalesTable();
+  if(tab==='promo'){ populatePromoProdukDatalist(); renderPromoCards(); }
 }
 tabBtnDashboard.onclick = () => switchTab('dashboard');
 tabBtnTransaksi.onclick = () => switchTab('transaksi');
 tabBtnFollowUp.onclick = () => switchTab('followup');
 tabBtnOutletSales.onclick = () => switchTab('outletsales');
+tabBtnPromo.onclick = () => switchTab('promo');
 
 // ---------- Input Transaksi ----------
 const tSales = document.getElementById('tSales');
@@ -6126,6 +6380,967 @@ document.getElementById('transForm').addEventListener('submit', async (e) => {
   }
 });
 
+// ---------- Kalkulator Promo -> Pengajuan Biaya Marketing (multi-item, per periode) ----------
+let promoType = 'diskon';
+let promoBundleItems = [{ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+let promoBuilderList = []; // promo item yang sedang disusun buat pengajuan yang belum disimpan
+let promoBuilderGimmicks = []; // paket gimmick yang sedang disusun
+
+function getPromoSelectedTier(){
+  if(document.getElementById('promoDbp').checked) return 'DBP';
+  if(document.getElementById('promoWbp').checked) return 'WBP';
+  return null;
+}
+function getPromoPricelistVersion(){
+  return document.getElementById('promoPricelistB').checked ? 'B' : 'A';
+}
+function lookupPromoPrice(item){
+  if(!item) return null;
+  const version = getPromoPricelistVersion();
+  const tier = getPromoSelectedTier();
+  const bucket = item.prices[version] || item.prices['A'];
+  if(!bucket) return null;
+  if(tier && bucket[tier]) return bucket[tier].pcs;
+  if(bucket['RBP']) return bucket['RBP'].pcs;
+  if(bucket['STD']) return bucket['STD'].pcs;
+  const anyTier = Object.values(bucket).find(Boolean);
+  return anyTier ? anyTier.pcs : null;
+}
+function resolvePromoProduk(label){
+  const idx = PRODUK_LABEL_MAP.get((label||'').trim());
+  return idx !== undefined ? PRICELIST[idx] : null;
+}
+
+document.getElementById('promoDbp').addEventListener('change', () => { if(document.getElementById('promoDbp').checked) document.getElementById('promoWbp').checked=false; computePromoResult(); });
+document.getElementById('promoWbp').addEventListener('change', () => { if(document.getElementById('promoWbp').checked) document.getElementById('promoDbp').checked=false; computePromoResult(); });
+document.getElementById('promoPricelistB').addEventListener('change', computePromoResult);
+
+document.getElementById('promoTypePills').querySelectorAll('.pill-mini').forEach(btn => {
+  btn.addEventListener('click', () => {
+    promoType = btn.dataset.type;
+    document.getElementById('promoTypePills').querySelectorAll('.pill-mini').forEach(b => b.classList.toggle('active', b===btn));
+    renderPromoTypeBody();
+  });
+});
+
+// Dipanggil tiap kali tab Kalkulator Promo dibuka.
+function populatePromoProdukDatalist(){
+  populateProdukDropdown();
+  renderPromoTypeBody();
+  renderPromoBuilderList();
+  renderPromoGimmickWrap();
+  renderPromoSummary();
+}
+
+function renderPromoTypeBody(){
+  const body = document.getElementById('promoTypeBody');
+  if(!body) return;
+  if(promoType === 'diskon'){
+    body.innerHTML = `
+      <div id="promoBundleItemsWrap"></div>
+      <button type="button" class="ds-btn-secondary" id="promoBundleAddBtn" style="margin-top:2px;">&#43; Tambah Produk</button>
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="form-field">
+          <label>Mode Diskon</label>
+          <div class="trans-tier-row">
+            <label class="trans-check"><input type="radio" name="promoDiskonMode" value="persen" checked> Persen (%)</label>
+            <label class="trans-check"><input type="radio" name="promoDiskonMode" value="nominal"> Nominal (Rp)</label>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Nilai Diskon <span style="color:var(--ink-dim);font-weight:400;">(berlaku sama untuk semua produk di atas)</span></label>
+          <input type="number" id="promoDiskonNilai" min="0" value="0">
+        </div>
+      </div>`;
+    document.getElementById('promoBundleAddBtn').addEventListener('click', () => {
+      promoBundleItems.push({ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 });
+      renderPromoBundleItems();
+    });
+    document.getElementById('promoDiskonNilai').addEventListener('input', computePromoResult);
+    body.querySelectorAll('input[name="promoDiskonMode"]').forEach(r => r.addEventListener('change', computePromoResult));
+    renderPromoBundleItems();
+  } else if(promoType === 'bxgy'){
+    body.innerHTML = `
+      <div class="form-grid">
+        <div class="form-field form-field-wide">
+          <label>Produk Dibeli</label>
+          <input type="text" id="promoBxgyBeliProduk" list="produkDatalistTrans" placeholder="Ketik nama produk..." autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label>Qty Dibeli</label>
+          <input type="number" id="promoBxgyBeliQty" min="1" value="1">
+        </div>
+        <div class="form-field form-field-wide">
+          <label>Produk Gratis <span style="color:var(--ink-dim);font-weight:400;">(kosongkan kalau produknya sama dengan yang dibeli)</span></label>
+          <input type="text" id="promoBxgyGratisProduk" list="produkDatalistTrans" placeholder="Ketik nama produk..." autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label>Qty Gratis</label>
+          <input type="number" id="promoBxgyGratisQty" min="1" value="1">
+        </div>
+      </div>`;
+    ['promoBxgyBeliProduk','promoBxgyBeliQty','promoBxgyGratisProduk','promoBxgyGratisQty'].forEach(id => {
+      document.getElementById(id).addEventListener('input', computePromoResult);
+    });
+  } else if(promoType === 'bundling'){
+    body.innerHTML = `
+      <div id="promoBundleItemsWrap"></div>
+      <button type="button" class="ds-btn-secondary" id="promoBundleAddBtn" style="margin-top:2px;">&#43; Tambah Item Bundle</button>
+      <div class="form-grid" style="margin-top:14px;">
+        <div class="form-field">
+          <label>Harga Bundle Total (Rp)</label>
+          <input type="number" id="promoBundleHarga" min="0" value="0">
+        </div>
+      </div>`;
+    document.getElementById('promoBundleAddBtn').addEventListener('click', () => {
+      promoBundleItems.push({ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 });
+      renderPromoBundleItems();
+    });
+    document.getElementById('promoBundleHarga').addEventListener('input', computePromoResult);
+    renderPromoBundleItems();
+  } else { // minbeli
+    body.innerHTML = `
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Minimal Pembelian (Rp)</label>
+          <input type="number" id="promoMinBeliNominal" min="0" placeholder="e.g. 100000" value="0">
+        </div>
+        <div class="form-field form-field-wide">
+          <label>Keterangan Produk / Kategori</label>
+          <input type="text" id="promoMinBeliKeterangan" placeholder="e.g. Semua produk, Kategori X...">
+        </div>
+        <div class="form-field">
+          <label>Mode Diskon</label>
+          <div class="trans-tier-row">
+            <label class="trans-check"><input type="radio" name="promoMinBeliMode" value="persen" checked> Persen (%)</label>
+            <label class="trans-check"><input type="radio" name="promoMinBeliMode" value="nominal"> Nominal (Rp)</label>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Diskon</label>
+          <input type="number" id="promoMinBeliDiskon" min="0" value="0">
+        </div>
+      </div>`;
+    document.getElementById('promoMinBeliNominal').addEventListener('input', computePromoResult);
+    document.getElementById('promoMinBeliKeterangan').addEventListener('input', computePromoResult);
+    document.getElementById('promoMinBeliDiskon').addEventListener('input', computePromoResult);
+    body.querySelectorAll('input[name="promoMinBeliMode"]').forEach(r => r.addEventListener('change', computePromoResult));
+  }
+  computePromoResult();
+}
+
+function renderPromoBundleItems(){
+  const wrap = document.getElementById('promoBundleItemsWrap');
+  if(!wrap) return;
+  wrap.innerHTML = promoBundleItems.map(it => `
+    <div class="promo-bundle-item" data-id="${it.id}">
+      <input type="text" class="pbi-produk" list="produkDatalistTrans" data-id="${it.id}" value="${(it.produkLabel||'').replace(/"/g,'&quot;')}" placeholder="Ketik nama produk..." autocomplete="off">
+      <input type="number" class="pbi-qty" data-id="${it.id}" min="1" value="${it.qty}">
+      <span class="pbi-subtotal num" data-id="${it.id}">—</span>
+      <button type="button" class="trans-item-del" data-id="${it.id}" title="Hapus item">&times;</button>
+    </div>`).join('');
+  wrap.querySelectorAll('.pbi-produk').forEach(input => {
+    input.addEventListener('input', () => {
+      const it = promoBundleItems.find(x => x.id === input.dataset.id);
+      if(it) it.produkLabel = input.value;
+      computePromoResult();
+    });
+  });
+  wrap.querySelectorAll('.pbi-qty').forEach(input => {
+    input.addEventListener('input', () => {
+      const it = promoBundleItems.find(x => x.id === input.dataset.id);
+      if(it) it.qty = parseFloat(input.value) || 0;
+      computePromoResult();
+    });
+  });
+  wrap.querySelectorAll('.trans-item-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      promoBundleItems = promoBundleItems.filter(x => x.id !== btn.dataset.id);
+      if(!promoBundleItems.length) promoBundleItems.push({ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 });
+      renderPromoBundleItems();
+    });
+  });
+  computePromoResult();
+}
+
+function setPromoResult(hargaNormal, hargaPromo){
+  const nilaiDiskon = Math.max(0, hargaNormal - hargaPromo);
+  const persenDiskon = hargaNormal > 0 ? (nilaiDiskon / hargaNormal * 100) : 0;
+  document.getElementById('promoResHargaNormal').textContent = hargaNormal ? fmtRupiah(hargaNormal) : '—';
+  document.getElementById('promoResHargaPromo').textContent = hargaPromo ? fmtRupiah(hargaPromo) : '—';
+  document.getElementById('promoResNilaiDiskon').textContent = nilaiDiskon ? fmtRupiah(nilaiDiskon) : '—';
+  document.getElementById('promoResPersenDiskon').textContent = hargaNormal ? `${persenDiskon.toFixed(1)}%` : '—';
+}
+
+function computePromoResult(){
+  const entry = buildCurrentPromoEntry(true);
+  if(!entry || entry.error){ setPromoResult(0,0); return; }
+  setPromoResult(entry.hargaNormal, entry.hargaPromo);
+}
+
+// Membaca konfigurasi kalkulator yang sedang aktif jadi satu entry siap masuk daftar
+// promo. `silent`=true dipakai buat live-preview hasil kalkulasi (nama boleh kosong
+// dulu); dipanggil dengan silent=false pas benar-benar mau ditambahkan ke daftar --
+// di situ Nama Promo baru wajib diisi.
+function buildCurrentPromoEntry(silent){
+  const nama = document.getElementById('promoItemNama').value.trim();
+  const estQty = parseFloat(document.getElementById('promoEstQty').value) || 0;
+
+  if(promoType === 'diskon'){
+    const validItems = promoBundleItems.filter(it => resolvePromoProduk(it.produkLabel));
+    if(!validItems.length) return silent ? null : { error: 'Pilih minimal 1 produk dulu.' };
+    const mode = (document.querySelector('input[name="promoDiskonMode"]:checked')||{}).value || 'persen';
+    const nilai = parseFloat(document.getElementById('promoDiskonNilai').value) || 0;
+    let hargaNormal = 0, hargaPromo = 0;
+    const namaList = [];
+    validItems.forEach(it => {
+      const item = resolvePromoProduk(it.produkLabel);
+      const harga = lookupPromoPrice(item) || 0;
+      const qty = it.qty || 0;
+      const hargaPromoSatuan = Math.max(0, mode==='persen' ? harga*(1-nilai/100) : harga-nilai);
+      hargaNormal += harga * qty;
+      hargaPromo += hargaPromoSatuan * qty;
+      namaList.push(it.produkLabel);
+    });
+    hargaPromo = Math.round(hargaPromo);
+    if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
+    return { nama: nama || `Diskon ${mode==='persen' ? nilai+'%' : fmtRupiah(nilai)}`, jenis:'Diskon',
+      produkItem: namaList.join(', '),
+      detail: `Diskon ${mode==='persen' ? nilai+'%' : fmtRupiah(nilai)} untuk ${validItems.length} produk`,
+      hargaNormal, hargaPromo, estQty };
+  }
+  if(promoType === 'bxgy'){
+    const beliInput = document.getElementById('promoBxgyBeliProduk');
+    const beliItem = resolvePromoProduk(beliInput.value);
+    if(!beliItem) return silent ? null : { error: 'Pilih produk yang dibeli dulu.' };
+    const beliQty = parseFloat(document.getElementById('promoBxgyBeliQty').value) || 0;
+    const gratisLabel = document.getElementById('promoBxgyGratisProduk').value.trim();
+    const gratisItem = gratisLabel ? resolvePromoProduk(gratisLabel) : beliItem;
+    const gratisQty = parseFloat(document.getElementById('promoBxgyGratisQty').value) || 0;
+    const hargaBeliSatuan = lookupPromoPrice(beliItem) || 0;
+    const hargaGratisSatuan = gratisItem ? (lookupPromoPrice(gratisItem) || 0) : 0;
+    const totalDibayar = hargaBeliSatuan * beliQty;
+    const hargaNormal = totalDibayar + (hargaGratisSatuan * gratisQty);
+    if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
+    return { nama: nama || `Beli ${beliInput.value.trim()} Gratis ${gratisLabel||beliInput.value.trim()}`,
+      jenis:'Beli X Free Y', produkItem: `${beliInput.value.trim()} + ${gratisLabel || beliInput.value.trim()}`,
+      detail: `Beli ${beliQty} Gratis ${gratisQty}`, hargaNormal, hargaPromo: totalDibayar, estQty };
+  }
+  if(promoType === 'bundling'){
+    const hargaBundleInput = document.getElementById('promoBundleHarga');
+    const validItems = promoBundleItems.filter(it => resolvePromoProduk(it.produkLabel));
+    if(!validItems.length) return silent ? null : { error: 'Pilih minimal 1 produk untuk bundle.' };
+    let hargaNormal = 0;
+    const namaList = [];
+    validItems.forEach(it => {
+      const item = resolvePromoProduk(it.produkLabel);
+      hargaNormal += (lookupPromoPrice(item)||0) * (it.qty||0);
+      namaList.push(`${it.qty}x ${it.produkLabel}`);
+    });
+    const hargaPromo = parseFloat(hargaBundleInput.value) || 0;
+    if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
+    return { nama: nama || 'Bundling', jenis:'Bundling', produkItem: namaList.join(' + '),
+      detail: `Bundle ${validItems.length} item`, hargaNormal, hargaPromo, estQty };
+  }
+  // minbeli
+  const nominalInput = document.getElementById('promoMinBeliNominal');
+  const nominal = parseFloat(nominalInput.value) || 0;
+  if(!nominal) return silent ? null : { error: 'Isi nominal minimal pembelian dulu.' };
+  const keterangan = document.getElementById('promoMinBeliKeterangan').value.trim();
+  const mode = (document.querySelector('input[name="promoMinBeliMode"]:checked')||{}).value || 'persen';
+  const diskon = parseFloat(document.getElementById('promoMinBeliDiskon').value) || 0;
+  const hargaPromo = Math.max(0, Math.round(mode==='persen' ? nominal*(1-diskon/100) : nominal-diskon));
+  if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
+  return { nama: nama || 'Min. Pembelian', jenis:'Min. Pembelian', produkItem: keterangan || 'Semua Produk',
+    detail: `Min. beli ${fmtRupiah(nominal)}, diskon ${mode==='persen'?diskon+'%':fmtRupiah(diskon)}`,
+    hargaNormal: nominal, hargaPromo, estQty };
+}
+
+document.getElementById('promoAddToListBtn').addEventListener('click', () => {
+  const statusEl = document.getElementById('promoAddStatus');
+  const entry = buildCurrentPromoEntry(false);
+  if(entry.error){
+    statusEl.textContent = entry.error;
+    statusEl.className = 'form-status err';
+    return;
+  }
+  promoBuilderList.push({ id:'pi'+Math.random().toString(36).slice(2,8), ...entry, evaluasiStatus:null, omzetAktual:null, catatan:'' });
+  renderPromoBuilderList();
+  renderPromoSummary();
+  document.getElementById('promoItemNama').value = '';
+  document.getElementById('promoEstQty').value = 1;
+  promoBundleItems = [{ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+  renderPromoTypeBody();
+  statusEl.textContent = 'Ditambahkan ke daftar \u2713';
+  statusEl.className = 'form-status ok';
+  setTimeout(() => { if(statusEl.textContent){ statusEl.textContent=''; statusEl.className='form-status'; } }, 2000);
+});
+
+function renderPromoBuilderList(){
+  const wrap = document.getElementById('promoListWrap');
+  if(!wrap) return;
+  wrap.innerHTML = promoBuilderList.map(p => `
+    <div class="promo-list-item" data-id="${p.id}">
+      <div class="promo-list-item-main">
+        <b>${(p.nama||'').replace(/</g,'&lt;')}</b>
+        <span>${(p.produkItem||'').replace(/</g,'&lt;')} &middot; ${(p.jenis||'').replace(/</g,'&lt;')} &middot; Est. Qty ${p.estQty||0}</span>
+      </div>
+      <div class="promo-list-item-price">
+        <span class="old">${fmtRupiah(p.hargaNormal)}</span>
+        <span class="new">${fmtRupiah(p.hargaPromo)}</span>
+        <span class="pct">${p.hargaNormal ? Math.round((p.hargaNormal-p.hargaPromo)/p.hargaNormal*100) : 0}%</span>
+      </div>
+      <button type="button" class="trans-item-del" data-id="${p.id}" title="Hapus dari daftar">&times;</button>
+    </div>`).join('') || `<div class="empty-note">Belum ada promo di daftar. Isi kalkulator di atas lalu klik "+ Tambah ke Daftar Promo".</div>`;
+  wrap.querySelectorAll('.trans-item-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      promoBuilderList = promoBuilderList.filter(p => p.id !== btn.dataset.id);
+      renderPromoBuilderList();
+      renderPromoSummary();
+    });
+  });
+}
+
+// ---------- Gimmick / Hampers builder ----------
+document.getElementById('promoGimmickAddPaketBtn').addEventListener('click', () => {
+  promoBuilderGimmicks.push({ id:'pg'+Math.random().toString(36).slice(2,8), namaPaket:'', targetSegmen:'', items:[{ id:'pgi'+Math.random().toString(36).slice(2,8), nama:'', qty:1, biayaUnit:0 }] });
+  renderPromoGimmickWrap();
+});
+
+function renderPromoGimmickWrap(){
+  const wrap = document.getElementById('promoGimmickWrap');
+  if(!wrap) return;
+  wrap.innerHTML = promoBuilderGimmicks.map(pkg => {
+    const total = pkg.items.reduce((s,it) => s + (it.qty||0)*(it.biayaUnit||0), 0);
+    return `
+    <div class="promo-gimmick-paket" data-id="${pkg.id}">
+      <div class="promo-gimmick-paket-head">
+        <input type="text" class="pg-nama" data-id="${pkg.id}" value="${(pkg.namaPaket||'').replace(/"/g,'&quot;')}" placeholder="Nama paket (mis. Goodiebag)">
+        <input type="text" class="pg-segmen" data-id="${pkg.id}" value="${(pkg.targetSegmen||'').replace(/"/g,'&quot;')}" placeholder="Target/Segmen (mis. Peserta Event)">
+        <button type="button" class="trans-item-del" data-id="${pkg.id}" data-act="del-paket" title="Hapus paket" style="position:static;">&times;</button>
+      </div>
+      <div class="promo-gimmick-items">
+        ${pkg.items.map(it => `
+          <div class="promo-gimmick-item-row" data-pkg="${pkg.id}" data-item="${it.id}">
+            <input type="text" class="pgi-nama" data-pkg="${pkg.id}" data-item="${it.id}" value="${(it.nama||'').replace(/"/g,'&quot;')}" placeholder="Nama item (mis. Lada Putih 3.5gr - Sachet)">
+            <input type="number" class="pgi-qty" data-pkg="${pkg.id}" data-item="${it.id}" min="0" value="${it.qty}" placeholder="Qty">
+            <input type="number" class="pgi-biaya" data-pkg="${pkg.id}" data-item="${it.id}" min="0" value="${it.biayaUnit}" placeholder="Biaya/unit">
+            <span class="pgi-subtotal">${fmtRupiah((it.qty||0)*(it.biayaUnit||0))}</span>
+            <button type="button" class="trans-item-del" data-pkg="${pkg.id}" data-item="${it.id}" data-act="del-item" title="Hapus item">&times;</button>
+          </div>`).join('')}
+      </div>
+      <button type="button" class="ds-btn-secondary pg-add-item-btn" data-id="${pkg.id}" style="padding:5px 10px;font-size:11.5px;">&#43; Tambah Item</button>
+      <div class="promo-gimmick-paket-total">Total Paket: <b>${fmtRupiah(total)}</b></div>
+    </div>`;
+  }).join('') || `<div class="empty-note">Belum ada paket gimmick/hampers.</div>`;
+
+  wrap.querySelectorAll('.pg-nama').forEach(input => {
+    input.addEventListener('input', () => {
+      const pkg = promoBuilderGimmicks.find(p => p.id === input.dataset.id);
+      if(pkg) pkg.namaPaket = input.value;
+    });
+  });
+  wrap.querySelectorAll('.pg-segmen').forEach(input => {
+    input.addEventListener('input', () => {
+      const pkg = promoBuilderGimmicks.find(p => p.id === input.dataset.id);
+      if(pkg) pkg.targetSegmen = input.value;
+    });
+  });
+  wrap.querySelectorAll('.pg-add-item-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pkg = promoBuilderGimmicks.find(p => p.id === btn.dataset.id);
+      if(!pkg) return;
+      pkg.items.push({ id:'pgi'+Math.random().toString(36).slice(2,8), nama:'', qty:1, biayaUnit:0 });
+      renderPromoGimmickWrap();
+    });
+  });
+  wrap.querySelectorAll('.pgi-nama, .pgi-qty, .pgi-biaya').forEach(input => {
+    input.addEventListener('input', () => {
+      const pkg = promoBuilderGimmicks.find(p => p.id === input.dataset.pkg);
+      if(!pkg) return;
+      const it = pkg.items.find(x => x.id === input.dataset.item);
+      if(!it) return;
+      if(input.classList.contains('pgi-nama')) it.nama = input.value;
+      else if(input.classList.contains('pgi-qty')) it.qty = parseFloat(input.value) || 0;
+      else it.biayaUnit = parseFloat(input.value) || 0;
+      const row = wrap.querySelector(`.promo-gimmick-item-row[data-pkg="${pkg.id}"][data-item="${it.id}"]`);
+      if(row) row.querySelector('.pgi-subtotal').textContent = fmtRupiah((it.qty||0)*(it.biayaUnit||0));
+      const total = pkg.items.reduce((s,x) => s + (x.qty||0)*(x.biayaUnit||0), 0);
+      const totalEl = wrap.querySelector(`.promo-gimmick-paket[data-id="${pkg.id}"] .promo-gimmick-paket-total b`);
+      if(totalEl) totalEl.textContent = fmtRupiah(total);
+      renderPromoSummary();
+    });
+  });
+  wrap.querySelectorAll('[data-act="del-paket"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      promoBuilderGimmicks = promoBuilderGimmicks.filter(p => p.id !== btn.dataset.id);
+      renderPromoGimmickWrap();
+      renderPromoSummary();
+    });
+  });
+  wrap.querySelectorAll('[data-act="del-item"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pkg = promoBuilderGimmicks.find(p => p.id === btn.dataset.pkg);
+      if(!pkg) return;
+      pkg.items = pkg.items.filter(x => x.id !== btn.dataset.item);
+      if(!pkg.items.length) pkg.items.push({ id:'pgi'+Math.random().toString(36).slice(2,8), nama:'', qty:1, biayaUnit:0 });
+      renderPromoGimmickWrap();
+      renderPromoSummary();
+    });
+  });
+}
+
+// ---------- Ringkasan biaya (Est. Biaya Diskon, Biaya Gimmick, Total, Cost Ratio) ----------
+function computeProposalCosts(promos, gimmicks, targetPenjualan){
+  const estBiayaDiskon = (promos||[]).reduce((s,p) => s + Math.max(0,(p.hargaNormal-p.hargaPromo))*(p.estQty||0), 0);
+  const biayaGimmick = (gimmicks||[]).reduce((s,pkg) => s + (pkg.items||[]).reduce((s2,it) => s2 + (it.qty||0)*(it.biayaUnit||0), 0), 0);
+  const totalBiayaMarketing = estBiayaDiskon + biayaGimmick;
+  const costRatio = targetPenjualan > 0 ? (totalBiayaMarketing / targetPenjualan * 100) : null;
+  return { estBiayaDiskon, biayaGimmick, totalBiayaMarketing, costRatio };
+}
+
+function renderPromoSummary(){
+  const targetPenjualan = parseFloat(document.getElementById('promoTargetPenjualan').value) || 0;
+  const { estBiayaDiskon, biayaGimmick, totalBiayaMarketing, costRatio } = computeProposalCosts(promoBuilderList, promoBuilderGimmicks, targetPenjualan);
+  document.getElementById('promoSumBiayaDiskon').textContent = fmtRupiah(estBiayaDiskon);
+  document.getElementById('promoSumBiayaGimmick').textContent = fmtRupiah(biayaGimmick);
+  document.getElementById('promoSumTotalBiaya').textContent = fmtRupiah(totalBiayaMarketing);
+  const ratioEl = document.getElementById('promoSumCostRatio');
+  if(costRatio === null){ ratioEl.textContent = '—'; ratioEl.style.color = ''; }
+  else {
+    ratioEl.textContent = `${costRatio.toFixed(1)}%`;
+    ratioEl.style.color = costRatio > 15 ? 'var(--alert)' : 'var(--green)';
+  }
+}
+document.getElementById('promoTargetPenjualan').addEventListener('input', renderPromoSummary);
+
+function resetPromoBuilder(){
+  ['promoPic','promoKeterangan','promoPeriodeMulai','promoPeriodeSelesai','promoTargetPenjualan',
+   'promoTtdDibuatNama','promoTtdDibuatJabatan','promoTtdTahuNama','promoTtdTahuJabatan','promoTtdSetujuNama','promoTtdSetujuJabatan'
+  ].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('promoItemNama').value = '';
+  document.getElementById('promoEstQty').value = 1;
+  promoBuilderList = [];
+  promoBuilderGimmicks = [];
+  promoBundleItems = [{ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+  renderPromoBuilderList();
+  renderPromoGimmickWrap();
+  renderPromoSummary();
+  renderPromoTypeBody();
+}
+document.getElementById('promoResetBtn').addEventListener('click', () => {
+  if(promoBuilderList.length || promoBuilderGimmicks.length){
+    if(!confirm('Bersihkan seluruh pengajuan yang sedang disusun?')) return;
+  }
+  resetPromoBuilder();
+});
+
+document.getElementById('promoSaveBtn').addEventListener('click', () => {
+  const statusEl = document.getElementById('promoSaveStatus');
+  const keterangan = document.getElementById('promoKeterangan').value.trim();
+  if(!keterangan){
+    statusEl.textContent = 'Isi Keterangan / Nama Program dulu.';
+    statusEl.className = 'form-status err';
+    return;
+  }
+  if(!promoBuilderList.length){
+    statusEl.textContent = 'Tambahkan minimal 1 promo ke daftar dulu.';
+    statusEl.className = 'form-status err';
+    return;
+  }
+  const targetPenjualan = parseFloat(document.getElementById('promoTargetPenjualan').value) || 0;
+  const proposal = {
+    id: genPromoId(),
+    pic: document.getElementById('promoPic').value.trim(),
+    keterangan,
+    periodeMulai: document.getElementById('promoPeriodeMulai').value || null,
+    periodeSelesai: document.getElementById('promoPeriodeSelesai').value || null,
+    targetPenjualan,
+    ttdDibuatNama: document.getElementById('promoTtdDibuatNama').value.trim(),
+    ttdDibuatJabatan: document.getElementById('promoTtdDibuatJabatan').value.trim(),
+    ttdTahuNama: document.getElementById('promoTtdTahuNama').value.trim(),
+    ttdTahuJabatan: document.getElementById('promoTtdTahuJabatan').value.trim(),
+    ttdSetujuNama: document.getElementById('promoTtdSetujuNama').value.trim(),
+    ttdSetujuJabatan: document.getElementById('promoTtdSetujuJabatan').value.trim(),
+    promos: promoBuilderList.map(p => ({...p})),
+    gimmicks: promoBuilderGimmicks.map(pkg => ({...pkg, items: pkg.items.map(it => ({...it}))})),
+    outlets: [],
+    status: 'aktif',
+    tanggalDibuat: dkey(todayDate()),
+    evalOmzetAktual: null, evalTransaksi: null, evalPengunjung: null,
+    evalApaBerhasil: null, evalPerluDiperbaiki: null, evalRencana: null, evalTanggal: null,
+  };
+  PROMOS.push(proposal);
+  savePromosOverride(PROMOS);
+  renderPromoCards();
+  pushPromosToSheets().catch(err => console.error('Push promo error:', err));
+  resetPromoBuilder();
+  statusEl.textContent = 'Pengajuan tersimpan \u2713 — lihat di "Pengajuan Tersimpan" di bawah.';
+  statusEl.className = 'form-status ok';
+  setTimeout(() => { if(statusEl.textContent){ statusEl.textContent=''; statusEl.className='form-status'; } }, 5000);
+});
+
+// ---------- Pengajuan Tersimpan: kartu, detail, evaluasi ----------
+let PROMOS = [];
+function loadPromosOverride(){
+  const store = safeStorage();
+  if(!store) return;
+  try{ const v = store.getItem('canvasing_promos'); if(v) PROMOS = JSON.parse(v); } catch(e){}
+}
+loadPromosOverride();
+function savePromosOverride(list){
+  const store = safeStorage();
+  if(!store) return false;
+  try { store.setItem('canvasing_promos', JSON.stringify(list)); return true; } catch(e){ return false; }
+}
+function genPromoId(){ return 'promo_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+async function pushPromosToSheets(){
+  const writeUrl = dsWriteUrlEl.value.trim();
+  if(!writeUrl) return { ok:false, error:'URL Apps Script belum diisi' };
+  const rows = PROMOS.map(p => ({
+    'KEY': p.id,
+    'PIC': p.pic || '', 'KETERANGAN': p.keterangan || '',
+    'PERIODE_MULAI': p.periodeMulai || '', 'PERIODE_SELESAI': p.periodeSelesai || '',
+    'TARGET_PENJUALAN': p.targetPenjualan || 0,
+    'PROMOS_JSON': JSON.stringify(p.promos||[]),
+    'GIMMICKS_JSON': JSON.stringify(p.gimmicks||[]),
+    'TTD_DIBUAT_NAMA': p.ttdDibuatNama || '', 'TTD_DIBUAT_JABATAN': p.ttdDibuatJabatan || '',
+    'TTD_TAHU_NAMA': p.ttdTahuNama || '', 'TTD_TAHU_JABATAN': p.ttdTahuJabatan || '',
+    'TTD_SETUJU_NAMA': p.ttdSetujuNama || '', 'TTD_SETUJU_JABATAN': p.ttdSetujuJabatan || '',
+    'OUTLETS': (p.outlets||[]).join('; '),
+    'STATUS': p.status || 'aktif',
+    'TANGGAL_DIBUAT': p.tanggalDibuat || '',
+    'EVAL_OMZET_AKTUAL': p.evalOmzetAktual ?? '', 'EVAL_TRANSAKSI': p.evalTransaksi ?? '', 'EVAL_PENGUNJUNG': p.evalPengunjung ?? '',
+    'EVAL_APA_BERHASIL': p.evalApaBerhasil || '', 'EVAL_PERLU_DIPERBAIKI': p.evalPerluDiperbaiki || '', 'EVAL_RENCANA': p.evalRencana || '',
+    'EVAL_TANGGAL': p.evalTanggal || '',
+  }));
+  try{
+    const payload = { __sheet:'PENGAJUAN', __mode:'bulk_upsert', __key:'KEY', __rows: rows };
+    const writeSecret = dsWriteSecretEl.value.trim();
+    if(writeSecret) payload.secret = writeSecret;
+    const res = await fetchWithRetry(writeUrl, {
+      method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
+    });
+    const result = await res.json().catch(() => ({ ok: res.ok }));
+    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    return { ok:true };
+  } catch(err){
+    console.error('Push promo error:', err);
+    return { ok:false, error: err.message };
+  }
+}
+
+async function pullPromosFromSheets(){
+  const url = dsPromoUrlEl.value.trim();
+  if(!url) return { ok:false };
+  try{
+    const text = await fetchText(url);
+    const parsed = Papa.parse(text.trim(), { header:true, skipEmptyLines:true });
+    const newList = parsed.data.map(row => {
+      const qOmzet = getVal(row, ['EVAL_OMZET_AKTUAL']);
+      const qTrx = getVal(row, ['EVAL_TRANSAKSI']);
+      const qPengunjung = getVal(row, ['EVAL_PENGUNJUNG']);
+      let promos = [], gimmicks = [];
+      try { promos = JSON.parse(getVal(row, ['PROMOS_JSON']) || '[]'); } catch(e){}
+      try { gimmicks = JSON.parse(getVal(row, ['GIMMICKS_JSON']) || '[]'); } catch(e){}
+      return {
+        id: getVal(row, ['KEY']),
+        pic: getVal(row, ['PIC']), keterangan: getVal(row, ['KETERANGAN']),
+        periodeMulai: getVal(row, ['PERIODE_MULAI']) || null, periodeSelesai: getVal(row, ['PERIODE_SELESAI']) || null,
+        targetPenjualan: toNumber(getVal(row, ['TARGET_PENJUALAN'])) || 0,
+        promos, gimmicks,
+        ttdDibuatNama: getVal(row, ['TTD_DIBUAT_NAMA']), ttdDibuatJabatan: getVal(row, ['TTD_DIBUAT_JABATAN']),
+        ttdTahuNama: getVal(row, ['TTD_TAHU_NAMA']), ttdTahuJabatan: getVal(row, ['TTD_TAHU_JABATAN']),
+        ttdSetujuNama: getVal(row, ['TTD_SETUJU_NAMA']), ttdSetujuJabatan: getVal(row, ['TTD_SETUJU_JABATAN']),
+        outlets: (getVal(row, ['OUTLETS'])||'').split(';').map(s=>s.trim()).filter(Boolean),
+        status: getVal(row, ['STATUS']) || 'aktif',
+        tanggalDibuat: getVal(row, ['TANGGAL_DIBUAT']),
+        evalOmzetAktual: qOmzet ? toNumber(qOmzet) : null,
+        evalTransaksi: qTrx ? toNumber(qTrx) : null,
+        evalPengunjung: qPengunjung ? toNumber(qPengunjung) : null,
+        evalApaBerhasil: getVal(row, ['EVAL_APA_BERHASIL']) || null,
+        evalPerluDiperbaiki: getVal(row, ['EVAL_PERLU_DIPERBAIKI']) || null,
+        evalRencana: getVal(row, ['EVAL_RENCANA']) || null,
+        evalTanggal: getVal(row, ['EVAL_TANGGAL']) || null,
+      };
+    }).filter(p => p.id && p.keterangan);
+    PROMOS = newList;
+    savePromosOverride(PROMOS);
+    renderPromoCards();
+    return { ok:true, count: newList.length };
+  } catch(err){
+    console.error('Pull promo error:', err);
+    return { ok:false, error: err.message };
+  }
+}
+
+function renderPromoCards(){
+  const wrap = document.getElementById('promoCardsWrap');
+  if(!wrap) return;
+  const sorted = PROMOS.slice().sort((a,b) => (b.tanggalDibuat||'').localeCompare(a.tanggalDibuat||''));
+  wrap.innerHTML = sorted.map(p => {
+    const costs = computeProposalCosts(p.promos, p.gimmicks, p.targetPenjualan||0);
+    const periode = p.periodeMulai ? `${fmtDateShort(parseDate(p.periodeMulai))}${p.periodeSelesai && p.periodeSelesai!==p.periodeMulai ? ' – '+fmtDateShort(parseDate(p.periodeSelesai)) : ''}` : '-';
+    return `
+    <div class="promo-card" data-id="${p.id}">
+      <div class="promo-card-head">
+        <span class="promo-card-nama">${(p.keterangan||'Pengajuan').replace(/</g,'&lt;')}</span>
+        <span class="promo-card-type">${(p.promos||[]).length} promo</span>
+      </div>
+      <div class="promo-card-ringkasan">${periode}${p.pic ? ' &middot; PIC: '+p.pic.replace(/</g,'&lt;') : ''}</div>
+      <div class="promo-card-prices">
+        <span class="new">${fmtRupiah(costs.totalBiayaMarketing)}</span>
+        <span style="color:var(--ink-dim);font-size:11px;">biaya marketing</span>
+      </div>
+      <div class="promo-card-foot">
+        <span>${p.outlets && p.outlets.length ? `${p.outlets.length} outlet` : 'Belum ada outlet'}</span>
+        <span class="promo-card-status ${p.status}">${p.status==='selesai'?'Selesai':'Aktif'}</span>
+      </div>
+    </div>`;
+  }).join('') || `<div class="empty-note">Belum ada pengajuan tersimpan. Susun di atas lalu klik "Simpan Pengajuan".</div>`;
+  wrap.querySelectorAll('.promo-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const promo = PROMOS.find(p => p.id === card.dataset.id);
+      if(promo) openPromoDetail(promo);
+    });
+  });
+}
+
+let currentPromoDetailId = null;
+const promoDetailOverlay = document.getElementById('promoDetailOverlay');
+
+function openPromoDetail(proposal){
+  currentPromoDetailId = proposal.id;
+  const costs = computeProposalCosts(proposal.promos, proposal.gimmicks, proposal.targetPenjualan||0);
+  document.getElementById('promoDetailTitle').textContent = proposal.keterangan || 'Pengajuan';
+  const periode = proposal.periodeMulai ? `${fmtDateShort(parseDate(proposal.periodeMulai))}${proposal.periodeSelesai && proposal.periodeSelesai!==proposal.periodeMulai ? ' – '+fmtDateShort(parseDate(proposal.periodeSelesai)) : ''}` : '-';
+  document.getElementById('promoDetailSummary').innerHTML = `
+    <div class="kpi-chip">PIC <b>${proposal.pic || '-'}</b></div>
+    <div class="kpi-chip">Periode <b>${periode}</b></div>
+    <div class="kpi-chip">Target Penjualan <b>${fmtRupiah(proposal.targetPenjualan||0)}</b></div>
+    <div class="kpi-chip">Total Biaya Marketing <b>${fmtRupiah(costs.totalBiayaMarketing)}</b></div>
+  `;
+  renderPromoDetailPromoList(proposal);
+  renderPromoDetailOutlets(proposal);
+  document.getElementById('promoDetailStatus').value = proposal.status || 'aktif';
+  document.getElementById('promoDetailOmzetAktual').value = proposal.evalOmzetAktual ?? '';
+  document.getElementById('promoDetailTransaksi').value = proposal.evalTransaksi ?? '';
+  document.getElementById('promoDetailPengunjung').value = proposal.evalPengunjung ?? '';
+  document.getElementById('promoDetailApaBerhasil').value = proposal.evalApaBerhasil || '';
+  document.getElementById('promoDetailPerluDiperbaiki').value = proposal.evalPerluDiperbaiki || '';
+  document.getElementById('promoDetailRencana').value = proposal.evalRencana || '';
+  document.getElementById('promoDetailStatusMsg').textContent = '';
+  document.getElementById('promoDetailStatusMsg').className = 'form-status';
+  document.getElementById('promoDetailOutletInput').value = '';
+  renderPromoDetailKpi(costs);
+  showOverlay(promoDetailOverlay);
+}
+
+function renderPromoDetailKpi(costs){
+  const omzetAktual = parseFloat(document.getElementById('promoDetailOmzetAktual').value) || 0;
+  const transaksi = parseFloat(document.getElementById('promoDetailTransaksi').value) || 0;
+  const pengunjung = parseFloat(document.getElementById('promoDetailPengunjung').value) || 0;
+  const costRatioEl = document.getElementById('promoDetailKpiCostRatio');
+  const roiEl = document.getElementById('promoDetailKpiRoi');
+  const convEl = document.getElementById('promoDetailKpiConversion');
+  if(omzetAktual > 0 && costs.totalBiayaMarketing > 0){
+    const costRatioRealisasi = costs.totalBiayaMarketing / omzetAktual * 100;
+    costRatioEl.textContent = `${costRatioRealisasi.toFixed(1)}%`;
+    costRatioEl.style.color = costRatioRealisasi > 100 ? 'var(--alert)' : 'var(--green)';
+    const roi = (omzetAktual - costs.totalBiayaMarketing) / costs.totalBiayaMarketing * 100;
+    roiEl.textContent = `${roi.toFixed(1)}%`;
+    roiEl.style.color = roi < 0 ? 'var(--alert)' : 'var(--green)';
+  } else {
+    costRatioEl.textContent = '—'; costRatioEl.style.color = '';
+    roiEl.textContent = '—'; roiEl.style.color = '';
+  }
+  convEl.textContent = pengunjung > 0 ? `${(transaksi/pengunjung*100).toFixed(1)}%` : '—';
+}
+['promoDetailOmzetAktual','promoDetailTransaksi','promoDetailPengunjung'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+    if(!proposal) return;
+    renderPromoDetailKpi(computeProposalCosts(proposal.promos, proposal.gimmicks, proposal.targetPenjualan||0));
+  });
+});
+
+function renderPromoDetailPromoList(proposal){
+  const wrap = document.getElementById('promoDetailPromoList');
+  wrap.innerHTML = (proposal.promos||[]).map(p => `
+    <div class="promo-list-item" style="padding-right:12px;" data-id="${p.id}">
+      <div class="promo-list-item-main">
+        <b>${(p.nama||'').replace(/</g,'&lt;')}</b>
+        <span>${(p.produkItem||'').replace(/</g,'&lt;')} &middot; ${fmtRupiah(p.hargaNormal)} &rarr; ${fmtRupiah(p.hargaPromo)}</span>
+      </div>
+      <div class="promo-eval-grid">
+        <select class="pe-status" data-id="${p.id}">
+          <option value="">Belum dievaluasi</option>
+          <option value="berhasil" ${p.evaluasiStatus==='berhasil'?'selected':''}>&#10003; Berhasil</option>
+          <option value="partial" ${p.evaluasiStatus==='partial'?'selected':''}>&#8776; Partial</option>
+          <option value="gagal" ${p.evaluasiStatus==='gagal'?'selected':''}>&#10007; Gagal</option>
+        </select>
+        <input type="number" class="pe-omzet" data-id="${p.id}" min="0" placeholder="Omzet aktual (Rp)" value="${p.omzetAktual ?? ''}">
+        <input type="text" class="pe-catatan" data-id="${p.id}" placeholder="Catatan..." value="${(p.catatan||'').replace(/"/g,'&quot;')}">
+      </div>
+    </div>`).join('') || `<div class="empty-note">Tidak ada promo.</div>`;
+  wrap.querySelectorAll('.pe-status').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+      const item = proposal && (proposal.promos||[]).find(x => x.id === sel.dataset.id);
+      if(item) item.evaluasiStatus = sel.value || null;
+    });
+  });
+  wrap.querySelectorAll('.pe-omzet').forEach(input => {
+    input.addEventListener('input', () => {
+      const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+      const item = proposal && (proposal.promos||[]).find(x => x.id === input.dataset.id);
+      if(item) item.omzetAktual = input.value !== '' ? parseFloat(input.value) : null;
+    });
+  });
+  wrap.querySelectorAll('.pe-catatan').forEach(input => {
+    input.addEventListener('input', () => {
+      const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+      const item = proposal && (proposal.promos||[]).find(x => x.id === input.dataset.id);
+      if(item) item.catatan = input.value;
+    });
+  });
+}
+
+function renderPromoDetailOutlets(proposal){
+  const wrap = document.getElementById('promoDetailOutletList');
+  wrap.innerHTML = (proposal.outlets||[]).map(name => `
+    <span class="promo-outlet-tag">${name.replace(/</g,'&lt;')}<button type="button" data-name="${name.replace(/"/g,'&quot;')}" title="Hapus">&times;</button></span>
+  `).join('') || `<span style="color:var(--ink-dim);font-size:12px;">Belum ada outlet disisipkan.</span>`;
+  wrap.querySelectorAll('button[data-name]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = PROMOS.find(x => x.id === currentPromoDetailId);
+      if(!p) return;
+      p.outlets = (p.outlets||[]).filter(n => n !== btn.dataset.name);
+      renderPromoDetailOutlets(p);
+    });
+  });
+}
+document.getElementById('promoDetailOutletAddBtn').addEventListener('click', () => {
+  const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+  if(!proposal) return;
+  const input = document.getElementById('promoDetailOutletInput');
+  const typed = input.value.trim();
+  if(!typed) return;
+  const match = MASTER_OUTLETS.find(o => normOutletKey(o.nama) === normOutletKey(typed));
+  const finalName = match ? match.nama : typed;
+  if(!proposal.outlets) proposal.outlets = [];
+  if(!proposal.outlets.includes(finalName)) proposal.outlets.push(finalName);
+  input.value = '';
+  renderPromoDetailOutlets(proposal);
+});
+
+document.getElementById('promoDetailClose').onclick = () => { promoDetailOverlay.hidden = true; renderPromoCards(); };
+promoDetailOverlay.addEventListener('click', (e) => { if(e.target===promoDetailOverlay){ promoDetailOverlay.hidden = true; renderPromoCards(); } });
+
+document.getElementById('promoDetailSaveBtn').addEventListener('click', async () => {
+  const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+  if(!proposal) return;
+  proposal.status = document.getElementById('promoDetailStatus').value;
+  const omzetVal = document.getElementById('promoDetailOmzetAktual').value;
+  const trxVal = document.getElementById('promoDetailTransaksi').value;
+  const pengunjungVal = document.getElementById('promoDetailPengunjung').value;
+  proposal.evalOmzetAktual = omzetVal !== '' ? parseFloat(omzetVal) : null;
+  proposal.evalTransaksi = trxVal !== '' ? parseFloat(trxVal) : null;
+  proposal.evalPengunjung = pengunjungVal !== '' ? parseFloat(pengunjungVal) : null;
+  proposal.evalApaBerhasil = document.getElementById('promoDetailApaBerhasil').value.trim() || null;
+  proposal.evalPerluDiperbaiki = document.getElementById('promoDetailPerluDiperbaiki').value.trim() || null;
+  proposal.evalRencana = document.getElementById('promoDetailRencana').value.trim() || null;
+  proposal.evalTanggal = dkey(todayDate());
+  savePromosOverride(PROMOS);
+  renderPromoCards();
+  const statusEl = document.getElementById('promoDetailStatusMsg');
+  statusEl.textContent = 'Menyinkron...';
+  statusEl.className = 'form-status';
+  const result = await pushPromosToSheets();
+  if(result.ok){
+    statusEl.textContent = 'Evaluasi tersimpan & tersinkron \u2713';
+    statusEl.className = 'form-status ok';
+  } else {
+    statusEl.textContent = `Tersimpan lokal, tapi gagal sinkron ke Sheets: ${result.error}`;
+    statusEl.className = 'form-status err';
+  }
+});
+
+document.getElementById('promoDetailDeleteBtn').addEventListener('click', () => {
+  if(!confirm('Hapus pengajuan ini? Tindakan ini tidak bisa dibatalkan.')) return;
+  PROMOS = PROMOS.filter(p => p.id !== currentPromoDetailId);
+  savePromosOverride(PROMOS);
+  renderPromoCards();
+  promoDetailOverlay.hidden = true;
+  pushPromosToSheets().catch(err => console.error('Push promo error:', err));
+});
+
+// ---------- Download PDF Pengajuan (window.print(), sama seperti dokumen referensi) ----------
+function buildPromoPdfHtml(proposal){
+  const costs = computeProposalCosts(proposal.promos, proposal.gimmicks, proposal.targetPenjualan||0);
+  const periode = proposal.periodeMulai
+    ? `${fmtDateShort(parseDate(proposal.periodeMulai))} – ${proposal.periodeSelesai ? fmtDateShort(parseDate(proposal.periodeSelesai)) : fmtDateShort(parseDate(proposal.periodeMulai))}`
+    : '-';
+  const esc = (s) => (s===null||s===undefined?'':s).toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const promoRows = (proposal.promos||[]).map((p,i) => {
+    const budgetPct = p.hargaNormal ? ((p.hargaNormal-p.hargaPromo)/p.hargaNormal*100) : 0;
+    return `<tr>
+      <td>${i+1}</td>
+      <td><div class="promo-name">${esc(p.nama)}</div><div class="promo-sub">${esc(p.produkItem)}</div></td>
+      <td>${esc(p.jenis)}</td>
+      <td class="num">${fmtRupiah(p.hargaNormal)}</td>
+      <td class="num">${fmtRupiah(p.hargaPromo)}</td>
+      <td class="num">${budgetPct.toFixed(2)}%</td>
+    </tr>`;
+  }).join('');
+
+  const gimmickSection = (proposal.gimmicks||[]).length ? `
+    <div class="section">
+      <div class="section-title">&#127873; Gimmick / Hampers (${proposal.gimmicks.length})</div>
+      <table>
+        <thead><tr><th style="width:24px;">#</th><th>Nama Paket</th><th>Item &amp; Biaya</th><th class="num">Total Paket</th></tr></thead>
+        <tbody>
+          ${proposal.gimmicks.map((pkg,i) => {
+            const total = (pkg.items||[]).reduce((s,it) => s+(it.qty||0)*(it.biayaUnit||0), 0);
+            const itemLines = (pkg.items||[]).map(it => `${esc(it.nama)} &times;${it.qty} — ${fmtRupiah((it.qty||0)*(it.biayaUnit||0))}`).join('<br>');
+            return `<tr><td>${i+1}</td><td>${esc(pkg.namaPaket)}<div class="promo-sub">${esc(pkg.targetSegmen)}</div></td><td>${itemLines}</td><td class="num">${fmtRupiah(total)}</td></tr>`;
+          }).join('')}
+          <tr class="total-row"><td colspan="3">Total biaya gimmick</td><td class="num">${fmtRupiah(costs.biayaGimmick)}</td></tr>
+        </tbody>
+      </table>
+    </div>` : '';
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Pengajuan Biaya Marketing - ${esc(proposal.keterangan)}</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; color:#1a1a1a; font-size:11px; margin:0; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #1a1a1a; padding-bottom:14px; margin-bottom:18px; }
+  .header-left { display:flex; gap:10px; align-items:center; }
+  .logo-badge { width:34px;height:34px;border-radius:8px;background:#c0392b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none; }
+  .company-name { font-weight:700; font-size:14px; }
+  .company-sub { font-size:9.5px; color:#666; margin-top:1px; }
+  .header-right { text-align:right; }
+  .doc-title { font-weight:700; font-size:11px; color:#2a6fdb; letter-spacing:.03em; }
+  .doc-sub { font-size:9.5px; color:#666; margin-top:3px; }
+  .section { border:1px solid #ddd; border-radius:8px; padding:14px 16px; margin-bottom:14px; page-break-inside:avoid; }
+  .section-title { font-weight:700; font-size:12px; margin-bottom:10px; }
+  .info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .info-label { font-size:9px; text-transform:uppercase; color:#888; letter-spacing:.03em; margin-bottom:3px; }
+  .info-value { font-size:12px; font-weight:600; }
+  table { width:100%; border-collapse:collapse; font-size:10.5px; }
+  th { text-align:left; font-size:9px; text-transform:uppercase; color:#888; padding:6px 8px; border-bottom:1px solid #ddd; }
+  td { padding:8px; border-bottom:1px solid #eee; vertical-align:top; }
+  .num { text-align:right; white-space:nowrap; }
+  .promo-name { font-weight:600; }
+  .promo-sub { font-size:9.5px; color:#777; margin-top:2px; }
+  .total-row td { font-weight:700; border-top:1px solid #333; border-bottom:none; padding-top:10px; }
+  .summary-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+  .summary-chip { text-align:center; background:#f7f7f5; border-radius:8px; padding:10px 4px; }
+  .summary-chip .label { font-size:8px; text-transform:uppercase; color:#888; margin-bottom:5px; letter-spacing:.02em; }
+  .summary-chip .value { font-size:13px; font-weight:700; }
+  .ttd-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; text-align:center; margin-top:6px; }
+  .ttd-label { font-size:9px; text-transform:uppercase; color:#888; letter-spacing:.03em; margin-bottom:38px; }
+  .ttd-line { border-bottom:1px solid #999; margin-bottom:6px; }
+  .ttd-name { font-weight:600; font-size:11px; }
+  .ttd-jabatan { font-size:9.5px; color:#777; }
+  .footer { text-align:center; font-size:9px; color:#999; margin-top:20px; padding-top:12px; border-top:1px solid #eee; }
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-badge">&#127805;</div>
+      <div>
+        <div class="company-name">PT Kiko Mart Indonesia</div>
+        <div class="company-sub">Jl. Jaten Gedhe Timur II No. 8A, Semarang &middot; www.kokiko.id</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="doc-title">PENGAJUAN BIAYA MARKETING</div>
+      <div class="doc-sub">${periode} &middot; ${esc(proposal.pic)}</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Info pengajuan</div>
+    <div class="info-grid">
+      <div><div class="info-label">PIC / Marketing</div><div class="info-value">${esc(proposal.pic) || '-'}</div></div>
+      <div><div class="info-label">Keterangan</div><div class="info-value">${esc(proposal.keterangan)}</div></div>
+      <div><div class="info-label">Periode</div><div class="info-value">${periode}</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Daftar promo (${(proposal.promos||[]).length})</div>
+    <table>
+      <thead><tr><th style="width:24px;">#</th><th>Nama Promo</th><th>Jenis</th><th class="num">Harga Normal</th><th class="num">Harga Promo</th><th class="num">Budget</th></tr></thead>
+      <tbody>${promoRows}</tbody>
+    </table>
+  </div>
+
+  ${gimmickSection}
+
+  <div class="section">
+    <div class="section-title">Ringkasan biaya marketing</div>
+    <div class="summary-grid">
+      <div class="summary-chip"><div class="label">Target Penjualan</div><div class="value">${fmtRupiah(proposal.targetPenjualan||0)}</div></div>
+      <div class="summary-chip"><div class="label">Est. Biaya Diskon</div><div class="value">${fmtRupiah(costs.estBiayaDiskon)}</div></div>
+      <div class="summary-chip"><div class="label">Biaya Gimmick</div><div class="value">${fmtRupiah(costs.biayaGimmick)}</div></div>
+      <div class="summary-chip"><div class="label">Total Biaya Marketing</div><div class="value">${fmtRupiah(costs.totalBiayaMarketing)}</div></div>
+      <div class="summary-chip"><div class="label">Cost Ratio (vs Omzet)</div><div class="value">${costs.costRatio!==null ? costs.costRatio.toFixed(2)+'%' : '-'}</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tanda tangan &amp; persetujuan</div>
+    <div class="ttd-grid">
+      <div>
+        <div class="ttd-label">Dibuat Oleh</div>
+        <div class="ttd-line"></div>
+        <div class="ttd-name">( ${esc(proposal.ttdDibuatNama) || '.....................'} )</div>
+        <div class="ttd-jabatan">${esc(proposal.ttdDibuatJabatan) || '-'}</div>
+      </div>
+      <div>
+        <div class="ttd-label">Mengetahui</div>
+        <div class="ttd-line"></div>
+        <div class="ttd-name">( ${esc(proposal.ttdTahuNama) || '.....................'} )</div>
+        <div class="ttd-jabatan">${esc(proposal.ttdTahuJabatan) || '-'}</div>
+      </div>
+      <div>
+        <div class="ttd-label">Disetujui Oleh</div>
+        <div class="ttd-line"></div>
+        <div class="ttd-name">( ${esc(proposal.ttdSetujuNama) || '.....................'} )</div>
+        <div class="ttd-jabatan">${esc(proposal.ttdSetujuJabatan) || '-'}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Pengajuan Biaya Marketing &middot; Dibuat ${fmtDateShort(todayDate())} &middot; Harga Inc. PPN</div>
+</body></html>`;
+}
+
+function openPromoPdf(proposal){
+  const html = buildPromoPdfHtml(proposal);
+  const win = window.open('', '_blank');
+  if(!win){
+    alert('Popup diblokir browser. Izinkan popup untuk situs ini supaya bisa download PDF.');
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); }, 300);
+}
+document.getElementById('promoDetailPdfBtn').addEventListener('click', () => {
+  const proposal = PROMOS.find(p => p.id === currentPromoDetailId);
+  if(proposal) openPromoPdf(proposal);
+});
+
 // ---------- Kelola Pricelist ----------
 const pricelistManagerOverlay = document.getElementById('pricelistManagerOverlay');
 const managePricelistBtn = document.getElementById('managePricelistBtn');
@@ -6460,6 +7675,7 @@ async function loadAllFromSheets(){
   const pricelistUrl = dsPricelistUrlEl.value.trim();
   const manualFuUrl = dsManualFuUrlEl.value.trim();
   const targetUrl = dsTargetUrlEl.value.trim();
+  const promoUrl = dsPromoUrlEl.value.trim();
 
   const parts = [];
   try{
@@ -6471,18 +7687,20 @@ async function loadAllFromSheets(){
     // Sheet pendukung dibaca BARENGAN (Promise.all), bukan satu-satu berurutan --
     // semuanya independen jadi tidak perlu nunggu gantian; total waktu tunggu jadi
     // sekitar selambat-lambatnya satu sheet, bukan jumlah keempat-empatnya.
-    if(scheduleUrl || pricelistUrl || manualFuUrl || targetUrl){
-      statusEl.textContent = 'Membaca Jadwal Mingguan, Pricelist, Follow Up & Target...';
-      const [scheduleR, , fuR, targetR] = await Promise.all([
+    if(scheduleUrl || pricelistUrl || manualFuUrl || targetUrl || promoUrl){
+      statusEl.textContent = 'Membaca Jadwal Mingguan, Pricelist, Follow Up, Target & Promo...';
+      const [scheduleR, , fuR, targetR, promoR] = await Promise.all([
         scheduleUrl ? pullAllScheduleFromSheets() : Promise.resolve(null),
         pricelistUrl ? pullPricelistFromSheets() : Promise.resolve(null),
         manualFuUrl ? pullManualFollowupsFromSheets() : Promise.resolve(null),
         targetUrl ? pullTargetsFromSheets() : Promise.resolve(null),
+        promoUrl ? pullPromosFromSheets() : Promise.resolve(null),
       ]);
       if(scheduleUrl && scheduleR && scheduleR.ok) parts.push(`jadwal (${scheduleR.weeks} minggu)`);
       if(pricelistUrl) parts.push('pricelist');
       if(manualFuUrl && fuR && fuR.ok) parts.push(`follow up (${fuR.count})`);
       if(targetUrl && targetR && targetR.ok) parts.push(`target (${targetR.count})`);
+      if(promoUrl && promoR && promoR.ok) parts.push(`promo (${promoR.count})`);
     }
     return { ok:true, parts };
   } catch(err){
@@ -6528,6 +7746,10 @@ async function syncAll(){
       statusEl.textContent = 'Sync Target Sales...';
       const targetResult = await pushTargetsToSheets();
       if(targetResult && targetResult.ok) parts.push('target');
+
+      statusEl.textContent = 'Sync Promo...';
+      const promoResult = await pushPromosToSheets();
+      if(promoResult && promoResult.ok) parts.push('promo');
     }
     return { ok:true, parts };
   } catch(err){
