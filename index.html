@@ -4,36 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Canvassing — Log Visit & Transaksi</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C9791E'/%3E%3Crect x='14' y='34' width='9' height='18' rx='2' fill='%23FFFDF8'/%3E%3Crect x='27.5' y='24' width='9' height='28' rx='2' fill='%23FFFDF8'/%3E%3Crect x='41' y='14' width='9' height='38' rx='2' fill='%23FFFDF8'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563EB'/%3E%3Crect x='14' y='34' width='9' height='18' rx='2' fill='%23FFFDF8'/%3E%3Crect x='27.5' y='24' width='9' height='28' rx='2' fill='%23FFFDF8'/%3E%3Crect x='41' y='14' width='9' height='38' rx='2' fill='%23FFFDF8'/%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   :root{
-    --bg:#F6F4EC;
+    --bg:#F4F3EF;
     --surface:#FFFFFF;
-    --surface-2:#F0EDE2;
-    --line:#E1DCCB;
-    --ink:#221F18;
-    --ink-dim:#7A7466;
-    --amber:#C9791E;
-    --amber-soft:#F3DDB8;
-    --teal:#2E7A6C;
-    --teal-soft:#CDE7E0;
-    --alert:#BF4A32;
-    --alert-soft:#F4D9CE;
-    --green:#4C8657;
-    --green-soft:#DAEBDC;
+    --surface-2:#F9F8F5;
+    --line:#E2E1DA;
+    --ink:#1A1A18;
+    --ink-dim:#5C5B57;
+    --amber:#2563EB;
+    --amber-soft:#EFF6FF;
+    --teal:#1D4ED8;
+    --teal-soft:#DBEAFE;
+    --alert:#DC2626;
+    --alert-soft:#FEF2F2;
+    --green:#16A34A;
+    --green-soft:#F0FDF4;
     --radius:10px;
-    --font-display:'Space Grotesk',sans-serif;
-    --font-body:'Inter',sans-serif;
-    --font-mono:'IBM Plex Mono',monospace;
+    --font-display:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --font-mono:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);}
-  ::selection{background:var(--amber-soft);color:#221F18;}
+  ::selection{background:var(--amber-soft);color:#1A1A18;}
 
   .wrap{max-width:1280px;margin:0 auto;padding:28px 24px 80px;}
 
@@ -265,6 +263,28 @@
   .promo-result-chip.discount b{color:var(--alert);}
   .promo-bundle-item{position:relative;border:1px solid var(--line);border-radius:8px;padding:10px 34px 10px 10px;margin-bottom:8px;display:grid;grid-template-columns:2fr 100px 80px;gap:10px;}
   .promo-bundle-item .trans-item-del{position:absolute;top:8px;right:8px;}
+  .promo-bundle-reco{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;}
+  .promo-reco-chip{
+    font-family:var(--font-mono);font-size:11.5px;padding:4px 10px;border-radius:20px;
+    border:1px solid var(--teal);background:var(--teal-soft,var(--surface-2));color:var(--teal);cursor:pointer;
+  }
+  .promo-reco-chip:hover{background:var(--teal);color:#fff;}
+  .promo-reco-chip.over-limit{border-color:var(--alert);color:var(--alert);}
+  .promo-reco-chip.over-limit:hover{background:var(--alert);color:#fff;}
+  .promo-bxgy-reco{margin-top:10px;font-size:11.5px;color:var(--ink-dim);}
+  .promo-bxgy-reco.over-limit{color:var(--alert);}
+  .promo-free-reco{margin-top:10px;}
+  .promo-free-reco-label{font-size:11px;color:var(--ink-dim);margin-bottom:6px;display:block;}
+  .promo-free-reco-pills{display:flex;flex-direction:column;gap:5px;}
+  .promo-free-reco-pill{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
+    cursor:pointer;font-size:12px;text-align:left;width:100%;
+  }
+  .promo-free-reco-pill:hover{border-color:var(--teal);background:var(--teal-soft);}
+  .promo-free-reco-pill .pfr-name{font-weight:600;color:var(--ink);}
+  .promo-free-reco-pill .pfr-price{font-family:var(--font-mono);color:var(--green);white-space:nowrap;font-weight:600;}
+  .promo-free-reco-pill .pfr-pct{color:var(--ink-dim);font-weight:400;font-size:10.5px;margin-left:4px;}
 
   .promo-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
   .promo-card{border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;background:var(--surface);}
@@ -1336,14 +1356,24 @@
           </div>
         </div>
         <div class="detail-section" style="margin-top:4px;">
-          <div class="detail-section-title">Tanda Tangan &amp; Persetujuan</div>
-          <div class="form-grid">
-            <div class="form-field"><label>Dibuat Oleh (Nama)</label><input type="text" id="promoTtdDibuatNama" placeholder="mis. Pandu K"></div>
-            <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdDibuatJabatan" placeholder="mis. Head of Sales &amp; Marketing"></div>
-            <div class="form-field"><label>Mengetahui (Nama)</label><input type="text" id="promoTtdTahuNama" placeholder="mis. Suwarni"></div>
-            <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdTahuJabatan" placeholder="mis. Head of Finance"></div>
-            <div class="form-field"><label>Disetujui Oleh (Nama)</label><input type="text" id="promoTtdSetujuNama" placeholder="mis. Jeannie R"></div>
-            <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdSetujuJabatan" placeholder="mis. Director"></div>
+          <div class="detail-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+            <span>Tanda Tangan &amp; Persetujuan</span>
+            <label class="trans-check" style="font-weight:400;"><input type="checkbox" id="promoSignEnabled" checked> Sertakan di PDF</label>
+          </div>
+          <div id="promoSignFieldsWrap">
+            <div class="form-grid">
+              <div class="form-field"><label>Dibuat Oleh (Nama)</label><input type="text" id="promoTtdDibuatNama" placeholder="mis. Pandu K"></div>
+              <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdDibuatJabatan" placeholder="mis. Head of Sales &amp; Marketing"></div>
+              <div class="form-field"><label>Mengetahui (Nama)</label><input type="text" id="promoTtdTahuNama" placeholder="mis. Suwarni"></div>
+              <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdTahuJabatan" placeholder="mis. Head of Finance"></div>
+              <div class="form-field"><label>Disetujui Oleh (Nama)</label><input type="text" id="promoTtdSetujuNama" placeholder="mis. Jeannie R"></div>
+              <div class="form-field"><label>Jabatan</label><input type="text" id="promoTtdSetujuJabatan" placeholder="mis. Director"></div>
+            </div>
+            <div class="form-actions" style="border-top:none;padding-top:8px;">
+              <span class="form-status" id="promoSignTemplateStatus"></span>
+              <button type="button" class="ds-btn-secondary" id="promoSignResetTemplateBtn">&#8635; Reset ke Kosong</button>
+              <button type="button" class="ds-btn-secondary" id="promoSignSaveTemplateBtn">&#128190; Simpan sebagai Template</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1368,6 +1398,7 @@
             </div>
           </div>
         </div>
+
 
         <div class="pill-group-mini" id="promoTypePills" style="margin:16px 0 4px;">
           <button type="button" class="pill-mini active" data-type="diskon">Diskon</button>
@@ -1627,7 +1658,8 @@
         <li>Buat juga sheet baru bernama persis <b>PRICELIST</b>, header: <code>KEY</code>, <code>KATEGORI</code>, <code>KEMASAN</code>, <code>PRODUK</code>, <code>SIZE</code>, <code>QTY_KARTON</code>, <code>A_DBP</code>, <code>A_WBP</code>, <code>A_RBP</code>, <code>B_DBP</code>, <code>B_WBP</code>, <code>B_RBP</code>.</li>
         <li>Buat juga sheet baru bernama persis <b>CATATAN FOLLOWUP</b>, header: <code>KEY</code>, <code>TANGGAL</code>, <code>SALES</code>, <code>OUTLET</code>, <code>KETERANGAN</code>, <code>RESOLVED</code> (kolom <code>OUTLET_KEY</code> ditambahkan otomatis).</li>
         <li>Buat juga sheet baru bernama persis <b>TARGET</b>, header: <code>KEY</code>, <code>SALES</code>, <code>PERIODE</code>, <code>TARGET_OMZET</code>, <code>TARGET_CALL</code>, <code>TARGET_EC</code>, <code>TARGET_NOO</code> — dipakai fitur Target Sales.</li>
-        <li>Buat juga sheet baru bernama persis <b>PENGAJUAN</b>, header: <code>KEY</code>, <code>PIC</code>, <code>KETERANGAN</code>, <code>PERIODE_MULAI</code>, <code>PERIODE_SELESAI</code>, <code>TARGET_PENJUALAN</code>, <code>PROMOS_JSON</code>, <code>GIMMICKS_JSON</code>, <code>TTD_DIBUAT_NAMA</code>, <code>TTD_DIBUAT_JABATAN</code>, <code>TTD_TAHU_NAMA</code>, <code>TTD_TAHU_JABATAN</code>, <code>TTD_SETUJU_NAMA</code>, <code>TTD_SETUJU_JABATAN</code>, <code>OUTLETS</code>, <code>STATUS</code>, <code>TANGGAL_DIBUAT</code>, <code>EVAL_OMZET_AKTUAL</code>, <code>EVAL_TRANSAKSI</code>, <code>EVAL_PENGUNJUNG</code>, <code>EVAL_APA_BERHASIL</code>, <code>EVAL_PERLU_DIPERBAIKI</code>, <code>EVAL_RENCANA</code>, <code>EVAL_TANGGAL</code> — dipakai fitur Kalkulator Promo (Pengajuan Biaya Marketing). Kolom <code>PROMOS_JSON</code> dan <code>GIMMICKS_JSON</code> isinya teks JSON (daftar promo/gimmick di pengajuan itu, termasuk evaluasi per-promonya) — jangan diedit manual di sheet, cukup dibiarkan apa adanya.</li>
+        <li>Buat juga sheet baru bernama persis <b>PENGAJUAN</b>, header: <code>KEY</code>, <code>PIC</code>, <code>KETERANGAN</code>, <code>PERIODE_MULAI</code>, <code>PERIODE_SELESAI</code>, <code>TARGET_PENJUALAN</code>, <code>PROMOS_JSON</code>, <code>GIMMICKS_JSON</code>, <code>TTD_DIBUAT_NAMA</code>, <code>TTD_DIBUAT_JABATAN</code>, <code>TTD_TAHU_NAMA</code>, <code>TTD_TAHU_JABATAN</code>, <code>TTD_SETUJU_NAMA</code>, <code>TTD_SETUJU_JABATAN</code>, <code>SERTAKAN_TTD</code>, <code>OUTLETS</code>, <code>STATUS</code>, <code>TANGGAL_DIBUAT</code>, <code>EVAL_OMZET_AKTUAL</code>, <code>EVAL_TRANSAKSI</code>, <code>EVAL_PENGUNJUNG</code>, <code>EVAL_APA_BERHASIL</code>, <code>EVAL_PERLU_DIPERBAIKI</code>, <code>EVAL_RENCANA</code>, <code>EVAL_TANGGAL</code> — dipakai fitur Kalkulator Promo (Pengajuan Biaya Marketing). Kolom <code>PROMOS_JSON</code> dan <code>GIMMICKS_JSON</code> isinya teks JSON (daftar promo/gimmick di pengajuan itu, termasuk evaluasi per-promonya) — jangan diedit manual di sheet, cukup dibiarkan apa adanya. <code>SERTAKAN_TTD</code> isinya TRUE/FALSE — menentukan apakah blok Tanda Tangan & Persetujuan ikut muncul di PDF pengajuan itu.</li>
+        <li>Isi <b>TTD_DIBUAT_NAMA</b> dst di atas cuma dipakai kalau Anda tidak menyimpan "Template Tanda Tangan" di dashboard (Kalkulator Promo → tombol "Simpan sebagai Template") — kalau sudah ada template, field itu otomatis terisi sendiri tiap bikin pengajuan baru, jadi tidak perlu ketik ulang.</li>
         <li>Buka <b>Extensions → Apps Script</b> dari spreadsheet Anda.</li>
         <li>Hapus isi default, lalu tempel kode di bawah ini.</li>
         <li>(Opsional) Ganti nilai <code>SECRET</code> dengan kode rahasia Anda sendiri, lalu isi kode yang sama di panel "Sumber Data" pada dashboard.</li>
@@ -2117,7 +2149,7 @@ function addCustomSales(name){
 
 const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 const DOW_ID = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
-const COLORS = { amber:'#C9791E', teal:'#2E7A6C', alert:'#BF4A32', green:'#4C8657', dim:'#7A7466', line:'#E1DCCB' };
+const COLORS = { amber:'#2563EB', teal:'#1D4ED8', alert:'#DC2626', green:'#16A34A', dim:'#5C5B57', line:'#E2E1DA' };
 
 function parseDate(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y, m-1, d); }
 function dkey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
@@ -6450,6 +6482,7 @@ function renderPromoTypeBody(){
         <div class="form-field">
           <label>Nilai Diskon <span style="color:var(--ink-dim);font-weight:400;">(berlaku sama untuk semua produk di atas)</span></label>
           <input type="number" id="promoDiskonNilai" min="0" value="0">
+          <div class="promo-bundle-reco" id="promoDiskonRecoWrap"></div>
         </div>
       </div>`;
     document.getElementById('promoBundleAddBtn').addEventListener('click', () => {
@@ -6478,7 +6511,9 @@ function renderPromoTypeBody(){
           <label>Qty Gratis</label>
           <input type="number" id="promoBxgyGratisQty" min="1" value="1">
         </div>
-      </div>`;
+      </div>
+      <div class="promo-free-reco" id="promoFreeRecoWrap"></div>
+      <div class="promo-bxgy-reco" id="promoBxgyRecoWrap"></div>`;
     ['promoBxgyBeliProduk','promoBxgyBeliQty','promoBxgyGratisProduk','promoBxgyGratisQty'].forEach(id => {
       document.getElementById(id).addEventListener('input', computePromoResult);
     });
@@ -6487,9 +6522,10 @@ function renderPromoTypeBody(){
       <div id="promoBundleItemsWrap"></div>
       <button type="button" class="ds-btn-secondary" id="promoBundleAddBtn" style="margin-top:2px;">&#43; Tambah Item Bundle</button>
       <div class="form-grid" style="margin-top:14px;">
-        <div class="form-field">
+        <div class="form-field form-field-wide">
           <label>Harga Bundle Total (Rp)</label>
           <input type="number" id="promoBundleHarga" min="0" value="0">
+          <div class="promo-bundle-reco" id="promoBundleRecoWrap"></div>
         </div>
       </div>`;
     document.getElementById('promoBundleAddBtn').addEventListener('click', () => {
@@ -6519,6 +6555,7 @@ function renderPromoTypeBody(){
         <div class="form-field">
           <label>Diskon</label>
           <input type="number" id="promoMinBeliDiskon" min="0" value="0">
+          <div class="promo-bundle-reco" id="promoMinBeliRecoWrap"></div>
         </div>
       </div>`;
     document.getElementById('promoMinBeliNominal').addEventListener('input', computePromoResult);
@@ -6572,7 +6609,201 @@ function setPromoResult(hargaNormal, hargaPromo){
   document.getElementById('promoResPersenDiskon').textContent = hargaNormal ? `${persenDiskon.toFixed(1)}%` : '—';
 }
 
+// Rekomendasi harga bundle: karena kita tidak punya data HPP/cost produk, "margin"
+// di sini didekati dari diskon terhadap harga jual normal (sama seperti logika Cost
+// Ratio di pengajuan) -- dibatasi maksimal 15% seperti aturan budget promo yang umum
+// dipakai. Kalau item bundle-nya belum lengkap/belum ada harga, area ini kosong saja.
+// Sisa "jatah" cost ratio pengajuan ini -- dihitung dari Target Penjualan dikurangi
+// biaya diskon+gimmick dari promo yang SUDAH masuk daftar (belum termasuk yang lagi
+// dikonfigurasi di kalkulator). Dipakai semua fungsi rekomendasi di bawah supaya
+// sarannya konsisten dengan Cost Ratio yang tampil di Ringkasan Biaya Marketing.
+// Kalau Target Penjualan belum diisi, return null -- fungsi pemanggil lalu jatuh
+// balik ke rekomendasi persentase generik (maks. 15% dari harga produk).
+const PROMO_MAX_COST_RATIO = 15; // %
+function getRemainingCostRatioBudget(){
+  const target = parseFloat(document.getElementById('promoTargetPenjualan').value) || 0;
+  if(!target) return null;
+  const used = computeProposalCosts(promoBuilderList, promoBuilderGimmicks, target);
+  const usedRatio = used.costRatio || 0;
+  const remainingRatio = Math.max(0, PROMO_MAX_COST_RATIO - usedRatio);
+  const remainingRp = Math.max(0, target * remainingRatio / 100);
+  return { target, usedRatio, remainingRatio, remainingRp };
+}
+
+function renderPromoBundleReco(){
+  const wrap = document.getElementById('promoBundleRecoWrap');
+  if(!wrap) return; // cuma ada di tipe Bundling
+  const validItems = promoBundleItems.filter(it => resolvePromoProduk(it.produkLabel));
+  if(!validItems.length){ wrap.innerHTML = ''; return; }
+  let hargaNormal = 0;
+  validItems.forEach(it => {
+    const item = resolvePromoProduk(it.produkLabel);
+    hargaNormal += (lookupPromoPrice(item)||0) * (it.qty||0);
+  });
+  if(!hargaNormal){ wrap.innerHTML = ''; return; }
+  const hargaBundleInput = document.getElementById('promoBundleHarga');
+  const currentVal = parseFloat(hargaBundleInput ? hargaBundleInput.value : 0) || 0;
+  const estQty = parseFloat(document.getElementById('promoEstQty').value) || 1;
+  const budget = getRemainingCostRatioBudget();
+
+  let reco, overLimit;
+  if(budget){
+    const maxDiscountRp = Math.min(hargaNormal, budget.remainingRp / estQty);
+    const recoHarga = Math.max(0, Math.round(hargaNormal - maxDiscountRp));
+    const recoPct = hargaNormal ? Math.round(maxDiscountRp/hargaNormal*100) : 0;
+    reco = `<span style="font-size:11px;color:var(--ink-dim);width:100%;">&#128161; Sisa jatah cost ratio pengajuan ini: ${fmtRupiah(budget.remainingRp)} (${budget.remainingRatio.toFixed(1)}% dari target Rp${budget.target.toLocaleString('id-ID')}) → harga bundle maks. <b>${fmtRupiah(recoHarga)}</b> (diskon ${recoPct}%) biar cost ratio pengajuan tetap &le;${PROMO_MAX_COST_RATIO}%.</span>
+      <button type="button" class="promo-reco-chip" data-harga="${recoHarga}">Pakai ${fmtRupiah(recoHarga)}</button>`;
+    overLimit = currentVal>0 && (hargaNormal-currentVal) > budget.remainingRp*1.001*estQty;
+  } else {
+    const levels = [5, 10, 15];
+    reco = `<span style="font-size:11px;color:var(--ink-dim);width:100%;">&#128161; Isi Target Penjualan dulu di atas biar rekomendasi dihitung dari cost ratio. Sementara ini rekomendasi umum (maks. ${PROMO_MAX_COST_RATIO}% dari harga normal ${fmtRupiah(hargaNormal)}):</span>` +
+      levels.map(pct => {
+        const harga = Math.round(hargaNormal * (1 - pct/100));
+        return `<button type="button" class="promo-reco-chip" data-harga="${harga}">${fmtRupiah(harga)} (-${pct}%)</button>`;
+      }).join('');
+    const currentPct = currentVal ? Math.round((hargaNormal-currentVal)/hargaNormal*100) : 0;
+    overLimit = currentVal>0 && currentPct > PROMO_MAX_COST_RATIO;
+  }
+  wrap.innerHTML = reco + (overLimit ? `<span style="font-size:11px;color:var(--alert);width:100%;">&#9888; Harga yang diisi bikin cost ratio pengajuan ini lewat ${PROMO_MAX_COST_RATIO}%.</span>` : '');
+  wrap.querySelectorAll('.promo-reco-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('promoBundleHarga').value = btn.dataset.harga;
+      computePromoResult();
+    });
+  });
+}
+
+// Rekomendasi diskon % (dipakai tipe Diskon & Min. Pembelian) -- cuma tampil saat mode
+// Persen. `hargaNormalTotalGetter` mengembalikan basis harga (total harga normal
+// produk terpilih untuk Diskon; nilai Minimal Pembelian untuk Min. Pembelian) yang
+// dipakai buat menerjemahkan sisa jatah cost ratio (Rp) jadi persentase.
+function renderDiscountPctReco(wrapId, inputId, modeRadioName, hargaNormalTotalGetter){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const modeEl = document.querySelector(`input[name="${modeRadioName}"]:checked`);
+  const mode = modeEl ? modeEl.value : 'persen';
+  if(mode !== 'persen'){ wrap.innerHTML = ''; return; }
+  const hargaNormalTotal = hargaNormalTotalGetter ? hargaNormalTotalGetter() : 0;
+  const budget = getRemainingCostRatioBudget();
+  const estQty = parseFloat(document.getElementById('promoEstQty').value) || 1;
+
+  if(budget && hargaNormalTotal > 0){
+    const maxPct = Math.max(0, Math.min(100, Math.round(budget.remainingRp / (hargaNormalTotal*estQty) * 100)));
+    wrap.innerHTML = `<span style="font-size:11px;color:var(--ink-dim);width:100%;">&#128161; Sisa jatah cost ratio pengajuan ini: ${fmtRupiah(budget.remainingRp)} (${budget.remainingRatio.toFixed(1)}% dari target Rp${budget.target.toLocaleString('id-ID')}) → maks. diskon <b>${maxPct}%</b> biar cost ratio pengajuan tetap &le;${PROMO_MAX_COST_RATIO}%.</span>
+      <button type="button" class="promo-reco-chip" data-value="${maxPct}">Pakai ${maxPct}%</button>`;
+  } else {
+    const levels = [5, 10, 15];
+    wrap.innerHTML = `<span style="font-size:11px;color:var(--ink-dim);width:100%;">&#128161; Isi Target Penjualan dulu di atas biar rekomendasi dihitung dari cost ratio. Sementara ini rekomendasi umum (maks. ${PROMO_MAX_COST_RATIO}%):</span>` +
+      levels.map(pct => `<button type="button" class="promo-reco-chip" data-value="${pct}">${pct}%</button>`).join('');
+  }
+  wrap.querySelectorAll('.promo-reco-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById(inputId).value = btn.dataset.value;
+      computePromoResult();
+    });
+  });
+}
+
+// Beli X Gratis Y tidak punya satu angka diskon langsung (ditentukan dari rasio qty
+// dibeli vs gratis), jadi di sini ditampilkan diskon EFEKTIF dari kombinasi saat ini,
+// dibandingkan ke sisa jatah cost ratio pengajuan (atau batas umum 15% kalau Target
+// Penjualan belum diisi).
+// Rekomendasi produk GRATIS untuk Beli X Gratis Y -- budget = 15% dari total harga
+// produk yang dibeli (harga satuan x qty dibeli). Kandidat: produk di Pricelist yang
+// harganya muat dalam budget itu, diurutkan dari yang PALING MAHAL dulu (masih dalam
+// budget) karena hadiah yang lebih mahal lebih menarik buat outlet, tapi tetap aman
+// dari sisi biaya.
+function renderPromoFreeReco(){
+  const wrap = document.getElementById('promoFreeRecoWrap');
+  if(!wrap) return;
+  const beliInput = document.getElementById('promoBxgyBeliProduk');
+  if(!beliInput) return;
+  const beliItem = resolvePromoProduk(beliInput.value);
+  if(!beliItem){ wrap.innerHTML = ''; return; }
+  const beliQty = parseFloat(document.getElementById('promoBxgyBeliQty').value) || 0;
+  const hargaBeliSatuan = lookupPromoPrice(beliItem) || 0;
+  const totalBeli = hargaBeliSatuan * beliQty;
+  if(!totalBeli){ wrap.innerHTML = ''; return; }
+
+  const budget15 = totalBeli * 0.15;
+  const gratisTyped = document.getElementById('promoBxgyGratisProduk').value.trim().toLowerCase();
+
+  const kandidat = PRICELIST
+    .map((item, idx) => ({ idx, harga: lookupPromoPrice(item) || 0 }))
+    .filter(x => x.harga > 0 && x.harga <= budget15 && produkLabel(x.idx).toLowerCase() !== gratisTyped)
+    .sort((a,b) => b.harga - a.harga) // paling mahal dulu selama masih dalam budget -- lebih menarik
+    .slice(0, 8);
+
+  if(!kandidat.length){
+    wrap.innerHTML = `<span class="promo-free-reco-label">&#128161; Rekomendasi produk gratis — budget maks. ${fmtRupiah(budget15)} (15% dari total beli): belum ada produk yang harganya masuk budget ini.</span>`;
+    return;
+  }
+
+  wrap.innerHTML = `<span class="promo-free-reco-label">&#128161; Rekomendasi produk gratis — budget maks. ${fmtRupiah(budget15)} (15% dari total beli):</span>
+    <div class="promo-free-reco-pills">
+      ${kandidat.map(x => {
+        const pct = Math.round(x.harga / budget15 * 100);
+        return `<button type="button" class="promo-free-reco-pill" data-idx="${x.idx}">
+          <span class="pfr-name">${produkLabel(x.idx)}</span>
+          <span class="pfr-price">${fmtRupiah(x.harga)}<span class="pfr-pct">(${pct}%)</span></span>
+        </button>`;
+      }).join('')}
+    </div>`;
+  wrap.querySelectorAll('.promo-free-reco-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('promoBxgyGratisProduk').value = produkLabel(+btn.dataset.idx);
+      computePromoResult();
+    });
+  });
+}
+
+function renderPromoBxgyReco(){
+  const wrap = document.getElementById('promoBxgyRecoWrap');
+  if(!wrap) return;
+  const beliInput = document.getElementById('promoBxgyBeliProduk');
+  if(!beliInput) return;
+  const beliItem = resolvePromoProduk(beliInput.value);
+  if(!beliItem){ wrap.innerHTML = ''; return; }
+  const beliQty = parseFloat(document.getElementById('promoBxgyBeliQty').value) || 0;
+  const gratisLabel = document.getElementById('promoBxgyGratisProduk').value.trim();
+  const gratisItem = gratisLabel ? resolvePromoProduk(gratisLabel) : beliItem;
+  const gratisQty = parseFloat(document.getElementById('promoBxgyGratisQty').value) || 0;
+  const hargaBeliSatuan = lookupPromoPrice(beliItem) || 0;
+  const hargaGratisSatuan = gratisItem ? (lookupPromoPrice(gratisItem) || 0) : 0;
+  const totalDibayar = hargaBeliSatuan * beliQty;
+  const nilaiGratis = hargaGratisSatuan * gratisQty;
+  const hargaNormal = totalDibayar + nilaiGratis;
+  if(!hargaNormal){ wrap.innerHTML = ''; return; }
+  const pct = Math.round(nilaiGratis / hargaNormal * 100);
+  const estQty = parseFloat(document.getElementById('promoEstQty').value) || 1;
+  const budget = getRemainingCostRatioBudget();
+
+  let limitPct = PROMO_MAX_COST_RATIO, budgetNote = '';
+  if(budget){
+    limitPct = Math.max(0, Math.min(100, Math.round(budget.remainingRp / (hargaNormal*estQty) * 100)));
+    budgetNote = ` (sisa jatah cost ratio pengajuan ini: ${fmtRupiah(budget.remainingRp)}, setara maks. ${limitPct}% untuk kombinasi ini)`;
+  }
+  const over = pct > limitPct;
+  wrap.className = `promo-bxgy-reco${over ? ' over-limit':''}`;
+  wrap.innerHTML = over
+    ? `&#9888; Diskon efektif kombinasi ini ${pct}% — di atas batas ${limitPct}% yang direkomendasikan${budgetNote}. Coba kurangi qty gratis atau naikkan qty dibeli.`
+    : `&#128161; Diskon efektif kombinasi ini: ${pct}%${budgetNote}.`;
+}
+
 function computePromoResult(){
+  if(promoType === 'diskon'){
+    renderDiscountPctReco('promoDiskonRecoWrap', 'promoDiskonNilai', 'promoDiskonMode', () => {
+      return promoBundleItems.filter(it => resolvePromoProduk(it.produkLabel))
+        .reduce((s,it) => s + (lookupPromoPrice(resolvePromoProduk(it.produkLabel))||0) * (it.qty||0), 0);
+    });
+  }
+  if(promoType === 'bxgy'){ renderPromoFreeReco(); renderPromoBxgyReco(); }
+  if(promoType === 'bundling') renderPromoBundleReco();
+  if(promoType === 'minbeli'){
+    renderDiscountPctReco('promoMinBeliRecoWrap', 'promoMinBeliDiskon', 'promoMinBeliMode', () => {
+      return parseFloat(document.getElementById('promoMinBeliNominal').value) || 0;
+    });
+  }
   const entry = buildCurrentPromoEntry(true);
   if(!entry || entry.error){ setPromoResult(0,0); return; }
   setPromoResult(entry.hargaNormal, entry.hargaPromo);
@@ -6812,14 +7043,16 @@ function renderPromoSummary(){
     ratioEl.style.color = costRatio > 15 ? 'var(--alert)' : 'var(--green)';
   }
 }
-document.getElementById('promoTargetPenjualan').addEventListener('input', renderPromoSummary);
+document.getElementById('promoTargetPenjualan').addEventListener('input', () => { renderPromoSummary(); computePromoResult(); });
+document.getElementById('promoEstQty').addEventListener('input', computePromoResult);
 
 function resetPromoBuilder(){
-  ['promoPic','promoKeterangan','promoPeriodeMulai','promoPeriodeSelesai','promoTargetPenjualan',
-   'promoTtdDibuatNama','promoTtdDibuatJabatan','promoTtdTahuNama','promoTtdTahuJabatan','promoTtdSetujuNama','promoTtdSetujuJabatan'
-  ].forEach(id => { document.getElementById(id).value = ''; });
+  ['promoPic','promoKeterangan','promoPeriodeMulai','promoPeriodeSelesai','promoTargetPenjualan'].forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('promoItemNama').value = '';
   document.getElementById('promoEstQty').value = 1;
+  document.getElementById('promoSignEnabled').checked = true;
+  document.getElementById('promoSignFieldsWrap').hidden = false;
+  applySignatureTemplate();
   promoBuilderList = [];
   promoBuilderGimmicks = [];
   promoBundleItems = [{ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
@@ -6833,6 +7066,53 @@ document.getElementById('promoResetBtn').addEventListener('click', () => {
     if(!confirm('Bersihkan seluruh pengajuan yang sedang disusun?')) return;
   }
   resetPromoBuilder();
+});
+
+// ---------- Template Tanda Tangan (biar tidak ketik ulang tiap bikin pengajuan baru) ----------
+const PROMO_SIGN_FIELDS = ['promoTtdDibuatNama','promoTtdDibuatJabatan','promoTtdTahuNama','promoTtdTahuJabatan','promoTtdSetujuNama','promoTtdSetujuJabatan'];
+function loadSignatureTemplate(){
+  const store = safeStorage();
+  if(!store) return null;
+  try{ const v = store.getItem('canvasing_promo_sign_template'); return v ? JSON.parse(v) : null; } catch(e){ return null; }
+}
+function applySignatureTemplate(){
+  const tpl = loadSignatureTemplate();
+  PROMO_SIGN_FIELDS.forEach(id => { document.getElementById(id).value = tpl ? (tpl[id]||'') : ''; });
+}
+applySignatureTemplate(); // isi pertama kali script jalan
+
+document.getElementById('promoSignEnabled').addEventListener('change', (e) => {
+  document.getElementById('promoSignFieldsWrap').hidden = !e.target.checked;
+});
+
+document.getElementById('promoSignSaveTemplateBtn').addEventListener('click', () => {
+  const store = safeStorage();
+  const statusEl = document.getElementById('promoSignTemplateStatus');
+  if(!store){
+    statusEl.textContent = 'Browser tidak mendukung penyimpanan lokal.';
+    statusEl.className = 'form-status err';
+    return;
+  }
+  const tpl = {};
+  PROMO_SIGN_FIELDS.forEach(id => { tpl[id] = document.getElementById(id).value.trim(); });
+  try{
+    store.setItem('canvasing_promo_sign_template', JSON.stringify(tpl));
+    statusEl.textContent = 'Template tersimpan \u2713 — otomatis terisi tiap bikin pengajuan baru.';
+    statusEl.className = 'form-status ok';
+  } catch(e){
+    statusEl.textContent = 'Gagal menyimpan template.';
+    statusEl.className = 'form-status err';
+  }
+  setTimeout(() => { if(statusEl.textContent){ statusEl.textContent=''; statusEl.className='form-status'; } }, 3000);
+});
+document.getElementById('promoSignResetTemplateBtn').addEventListener('click', () => {
+  const store = safeStorage();
+  if(store){ try { store.removeItem('canvasing_promo_sign_template'); } catch(e){} }
+  PROMO_SIGN_FIELDS.forEach(id => { document.getElementById(id).value = ''; });
+  const statusEl = document.getElementById('promoSignTemplateStatus');
+  statusEl.textContent = 'Template dihapus, field dikosongkan.';
+  statusEl.className = 'form-status';
+  setTimeout(() => { if(statusEl.textContent){ statusEl.textContent=''; statusEl.className='form-status'; } }, 3000);
 });
 
 document.getElementById('promoSaveBtn').addEventListener('click', () => {
@@ -6849,6 +7129,7 @@ document.getElementById('promoSaveBtn').addEventListener('click', () => {
     return;
   }
   const targetPenjualan = parseFloat(document.getElementById('promoTargetPenjualan').value) || 0;
+  const sertakanTtd = document.getElementById('promoSignEnabled').checked;
   const proposal = {
     id: genPromoId(),
     pic: document.getElementById('promoPic').value.trim(),
@@ -6856,6 +7137,7 @@ document.getElementById('promoSaveBtn').addEventListener('click', () => {
     periodeMulai: document.getElementById('promoPeriodeMulai').value || null,
     periodeSelesai: document.getElementById('promoPeriodeSelesai').value || null,
     targetPenjualan,
+    sertakanTtd,
     ttdDibuatNama: document.getElementById('promoTtdDibuatNama').value.trim(),
     ttdDibuatJabatan: document.getElementById('promoTtdDibuatJabatan').value.trim(),
     ttdTahuNama: document.getElementById('promoTtdTahuNama').value.trim(),
@@ -6908,6 +7190,7 @@ async function pushPromosToSheets(){
     'TTD_DIBUAT_NAMA': p.ttdDibuatNama || '', 'TTD_DIBUAT_JABATAN': p.ttdDibuatJabatan || '',
     'TTD_TAHU_NAMA': p.ttdTahuNama || '', 'TTD_TAHU_JABATAN': p.ttdTahuJabatan || '',
     'TTD_SETUJU_NAMA': p.ttdSetujuNama || '', 'TTD_SETUJU_JABATAN': p.ttdSetujuJabatan || '',
+    'SERTAKAN_TTD': p.sertakanTtd === false ? 'FALSE' : 'TRUE',
     'OUTLETS': (p.outlets||[]).join('; '),
     'STATUS': p.status || 'aktif',
     'TANGGAL_DIBUAT': p.tanggalDibuat || '',
@@ -6953,6 +7236,7 @@ async function pullPromosFromSheets(){
         ttdDibuatNama: getVal(row, ['TTD_DIBUAT_NAMA']), ttdDibuatJabatan: getVal(row, ['TTD_DIBUAT_JABATAN']),
         ttdTahuNama: getVal(row, ['TTD_TAHU_NAMA']), ttdTahuJabatan: getVal(row, ['TTD_TAHU_JABATAN']),
         ttdSetujuNama: getVal(row, ['TTD_SETUJU_NAMA']), ttdSetujuJabatan: getVal(row, ['TTD_SETUJU_JABATAN']),
+        sertakanTtd: !/^(false|0|tidak)$/i.test(String(getVal(row, ['SERTAKAN_TTD']) || 'true').trim()),
         outlets: (getVal(row, ['OUTLETS'])||'').split(';').map(s=>s.trim()).filter(Boolean),
         status: getVal(row, ['STATUS']) || 'aktif',
         tanggalDibuat: getVal(row, ['TANGGAL_DIBUAT']),
@@ -7212,6 +7496,31 @@ function buildPromoPdfHtml(proposal){
       </table>
     </div>` : '';
 
+  const ttdSection = proposal.sertakanTtd === false ? '' : `
+  <div class="section">
+    <div class="section-title">Tanda tangan &amp; persetujuan</div>
+    <div class="ttd-grid">
+      <div>
+        <div class="ttd-label">Dibuat Oleh</div>
+        <div class="ttd-line"></div>
+        <div class="ttd-name">( ${esc(proposal.ttdDibuatNama) || '.....................'} )</div>
+        <div class="ttd-jabatan">${esc(proposal.ttdDibuatJabatan) || '-'}</div>
+      </div>
+      <div>
+        <div class="ttd-label">Mengetahui</div>
+        <div class="ttd-line"></div>
+        <div class="ttd-name">( ${esc(proposal.ttdTahuNama) || '.....................'} )</div>
+        <div class="ttd-jabatan">${esc(proposal.ttdTahuJabatan) || '-'}</div>
+      </div>
+      <div>
+        <div class="ttd-label">Disetujui Oleh</div>
+        <div class="ttd-line"></div>
+        <div class="ttd-name">( ${esc(proposal.ttdSetujuNama) || '.....................'} )</div>
+        <div class="ttd-jabatan">${esc(proposal.ttdSetujuJabatan) || '-'}</div>
+      </div>
+    </div>
+  </div>`;
+
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Pengajuan Biaya Marketing - ${esc(proposal.keterangan)}</title>
 <style>
@@ -7295,29 +7604,7 @@ function buildPromoPdfHtml(proposal){
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-title">Tanda tangan &amp; persetujuan</div>
-    <div class="ttd-grid">
-      <div>
-        <div class="ttd-label">Dibuat Oleh</div>
-        <div class="ttd-line"></div>
-        <div class="ttd-name">( ${esc(proposal.ttdDibuatNama) || '.....................'} )</div>
-        <div class="ttd-jabatan">${esc(proposal.ttdDibuatJabatan) || '-'}</div>
-      </div>
-      <div>
-        <div class="ttd-label">Mengetahui</div>
-        <div class="ttd-line"></div>
-        <div class="ttd-name">( ${esc(proposal.ttdTahuNama) || '.....................'} )</div>
-        <div class="ttd-jabatan">${esc(proposal.ttdTahuJabatan) || '-'}</div>
-      </div>
-      <div>
-        <div class="ttd-label">Disetujui Oleh</div>
-        <div class="ttd-line"></div>
-        <div class="ttd-name">( ${esc(proposal.ttdSetujuNama) || '.....................'} )</div>
-        <div class="ttd-jabatan">${esc(proposal.ttdSetujuJabatan) || '-'}</div>
-      </div>
-    </div>
-  </div>
+  ${ttdSection}
 
   <div class="footer">Pengajuan Biaya Marketing &middot; Dibuat ${fmtDateShort(todayDate())} &middot; Harga Inc. PPN</div>
 </body></html>`;
