@@ -3453,6 +3453,13 @@ if(isFileProtocol){
 
 let dsAutoTimer = null;
 let dsLiveMode = false;
+// Ditandai true sesaat sebelum, dan false sesudah, setiap kali dashboard menulis
+// ke Apps Script atas aksi pengguna (Simpan Kunjungan / Simpan Transaksi). Dipakai
+// supaya auto full sync (yang juga menulis lewat Apps Script, dan bisa menahan
+// LockService cukup lama untuk sheet yang banyak barisnya) tidak mulai berjalan
+// TEPAT saat pengguna sedang menyimpan -- kalau keduanya bentrok, permintaan
+// simpan pengguna bisa antre lock lebih lama dan lebih gampang gagal/timeout.
+let userSaveInFlight = false;
 
 function dsSetStatus(msg, kind){
   dsStatusEl.textContent = msg;
@@ -3664,6 +3671,14 @@ function setupAutoRefresh(){
 let dsAutoFullSyncTimer = null;
 async function autoFullSyncTick(){
   const statusEl = document.getElementById('syncAllStatus');
+  // Kalau pengguna sedang di tengah proses Simpan Kunjungan/Transaksi, tunda
+  // sebentar dulu (dicek ulang tiap 2 detik, sampai 20 detik) alih-alih langsung
+  // jalan bareng dan berebut LockService di Apps Script dengan penyimpanan itu.
+  let waited = 0;
+  while(userSaveInFlight && waited < 20000){
+    await new Promise(r => setTimeout(r, 2000));
+    waited += 2000;
+  }
   try{
     await syncAll();
     await loadAllFromSheets();
@@ -3681,6 +3696,21 @@ function setupAutoFullSync(){
 }
 dsAutoFullSyncEl.addEventListener('change', () => { persistConfig(); setupAutoFullSync(); });
 dsAutoFullSyncIntervalEl.addEventListener('change', () => { persistConfig(); setupAutoFullSync(); });
+
+// ---------- Kelola Pricelist: DOM refs ----------
+// Dideklarasikan di sini (sebelum initDataSource) karena pullPricelistFromSheets()
+// dipanggil otomatis saat halaman dimuat (lihat auto-load sheet pendukung di bawah),
+// dan fungsi itu butuh plMgrStatus. Kalau const ini dideklarasikan di bawah (dekat
+// definisi renderPricelistMgrTable/openPricelistManager), maka pemanggilan otomatis
+// saat load akan kena ReferenceError "Cannot access 'plMgrStatus' before initialization".
+const pricelistManagerOverlay = document.getElementById('pricelistManagerOverlay');
+const managePricelistBtn = document.getElementById('managePricelistBtn');
+const pricelistManagerClose = document.getElementById('pricelistManagerClose');
+const plMgrBody = document.getElementById('plMgrBody');
+const plMgrSearch = document.getElementById('plMgrSearch');
+const plMgrKategoriFilter = document.getElementById('plMgrKategoriFilter');
+const plMgrStatus = document.getElementById('plMgrStatus');
+let plMgrDraft = [];
 
 // restore saved config on load
 (function initDataSource(){
@@ -3707,20 +3737,29 @@ dsAutoFullSyncIntervalEl.addEventListener('change', () => { persistConfig(); set
     // cuma ke-tarik kalau tombol "Sync Semua" diklik manual -- jadi update terbaru di
     // Sheets (mis. Target bulan ini) tidak langsung kelihatan begitu halaman dibuka.
     // Sekarang otomatis ditarik juga saat load, sama seperti LOG VISIT/TRANSAKSI di atas.
-    // Dijalankan BARENGAN (Promise.all), bukan satu-satu berurutan -- sebelumnya tiap
-    // sheet nunggu gantian selesai dulu baru mulai yang berikutnya, jadi loading-nya
-    // jadi sekitar 4x lebih lama dari yang seharusnya untuk hal yang sama sekali tidak
-    // saling bergantung.
+    // Tetap jalan BARENGAN (bukan satu-satu nunggu gantian, yang bikin loading ~4x lebih
+    // lama), tapi START-nya masing-masing diberi jeda kecil (bukan meletus di detik yang
+    // SAMA PERSIS) -- supaya tidak membebani koneksi/endpoint publish-to-web Google dengan
+    // segerombolan request yang mendarat di saat yang identik, terutama pas halaman baru
+    // dibuka atau baru habis deploy ulang.
     (async () => {
       try{
-        const tasks = [];
-        if(cfg.scheduleUrl) tasks.push(pullAllScheduleFromSheets());
-        if(cfg.pricelistUrl) tasks.push(pullPricelistFromSheets());
-        if(cfg.manualFuUrl) tasks.push(pullManualFollowupsFromSheets());
-        if(cfg.targetUrl) tasks.push(pullTargetsFromSheets());
-        if(cfg.promoUrl) tasks.push(pullPromosFromSheets());
-        if(tasks.length){
-          await Promise.all(tasks);
+        const staggeredTasks = [];
+        const STAGGER_MS = 150;
+        [
+          [cfg.scheduleUrl, pullAllScheduleFromSheets],
+          [cfg.pricelistUrl, pullPricelistFromSheets],
+          [cfg.manualFuUrl, pullManualFollowupsFromSheets],
+          [cfg.targetUrl, pullTargetsFromSheets],
+          [cfg.promoUrl, pullPromosFromSheets],
+        ].forEach(([url, fn], i) => {
+          if(!url) return;
+          staggeredTasks.push(
+            new Promise(r => setTimeout(r, i * STAGGER_MS)).then(fn)
+          );
+        });
+        if(staggeredTasks.length){
+          await Promise.all(staggeredTasks);
           renderAll();
         }
       } catch(err){
@@ -3860,6 +3899,7 @@ visitForm.addEventListener('submit', async (e) => {
   formSubmitBtn.disabled = true;
   formStatusEl.textContent = 'Menyimpan...';
   formStatusEl.className = 'form-status';
+  userSaveInFlight = true;
   try{
     const res = await fetchWithRetry(writeUrl, {
       method: 'POST',
@@ -3927,6 +3967,7 @@ visitForm.addEventListener('submit', async (e) => {
     console.error('Save visit error:', err);
   } finally {
     formSubmitBtn.disabled = false;
+    userSaveInFlight = false;
   }
 });
 
@@ -3949,7 +3990,6 @@ const APPS_SCRIPT_CODE = `/**
  * editor Apps Script (pilih fungsinya di dropdown atas, lalu klik Run).
  */
 
-var OUTLET_MASTER_SHEET = 'MASTER OUTLET';
 
 // Peta: nama sheet -> { nameField: kolom berisi nama outlet, keyField: kolom KEY di sheet itu }
 var OUTLET_KEY_MAP = {
@@ -4029,8 +4069,15 @@ function handleBulkUpsert(data) {
   var keyColIdx = headers.indexOf(keyField);
   if (keyColIdx === -1) return jsonOutput({ ok: false, error: 'Kolom kunci "' + keyField + '" tidak ditemukan' });
 
-  // resolve/attach OUTLET_KEY (atau KEY, untuk MASTER OUTLET) sebelum di-upsert
-  rows.forEach(function (r) { attachOutletKey(sheetName, r); });
+  // resolve/attach OUTLET_KEY (atau KEY, untuk MASTER OUTLET) sebelum di-upsert.
+  // PENTING: ini di-batch (satu kali baca MASTER OUTLET, satu kali lock, satu
+  // kali tulis outlet baru) alih-alih memanggil attachOutletKey per baris --
+  // dulu tiap baris yang belum punya OUTLET_KEY memicu pembacaan ULANG seluruh
+  // sheet MASTER OUTLET (bisa 1000+ baris) plus siklus lock sendiri-sendiri,
+  // sehingga bulk sync yang berisi banyak baris bisa menahan lock cukup lama
+  // dan bikin request lain (mis. simpan transaksi sales) gagal/timeout karena
+  // antre lock atau kena limit concurrent execution Apps Script.
+  if (OUTLET_KEY_MAP[sheetName]) resolveOutletKeysBatch(sheetName, rows);
 
   // Dikunci dari baca "baris mana yang sudah ada" sampai selesai nulis, supaya dua
   // proses bulk upsert yang jalan hampir bersamaan (mis. dua orang sama-sama Sync
@@ -4125,8 +4172,97 @@ function attachOutletKey(sheetName, rowObj) {
   rowObj[cfg.keyField] = getOrCreateOutletKey(name);
 }
 
+// Versi batch dari attachOutletKey: dipakai untuk bulk_upsert supaya SEMUA baris
+// diselesaikan dalam SATU kali lock + SATU kali baca MASTER OUTLET + (kalau perlu)
+// SATU kali tulis untuk semua outlet baru sekaligus -- bukan per baris. Ini jauh
+// lebih murah untuk sync yang berisi ratusan baris, dan yang lebih penting: tidak
+// menahan lock berkali-kali secara terus-menerus sehingga request lain (mis. simpan
+// transaksi) tidak sampai antre lama / kena gagal karena limit concurrent execution.
+function resolveOutletKeysBatch(sheetName, rows) {
+  var cfg = OUTLET_KEY_MAP[sheetName];
+  if (!cfg) return;
+
+  // baris yang sudah punya key sendiri tidak perlu diproses sama sekali
+  var pending = rows.filter(function (r) { return !r[cfg.keyField] && r[cfg.nameField] && String(r[cfg.nameField]).trim(); });
+  rows.forEach(function (r) {
+    if (!r[cfg.keyField] && (!r[cfg.nameField] || !String(r[cfg.nameField]).trim())) r[cfg.keyField] = '';
+  });
+  if (!pending.length) return;
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(OUTLET_MASTER_SHEET);
+    if (!sheet) throw new Error('Sheet "MASTER OUTLET" tidak ditemukan');
+
+    var keyCol = ensureColumn(sheet, 'KEY');
+    var nameCol = ensureColumn(sheet, 'NAMA OUTLET');
+    var lastCol = sheet.getLastColumn();
+    var lastRow = getTrueLastRow(sheet);
+
+    // satu kali baca seluruh MASTER OUTLET ke memori
+    var values = lastRow > 1 ? sheet.getRange(2, 1, lastRow - 1, lastCol).getValues() : [];
+    var byName = {}; // normalizedName -> row index in values array
+    var maxNum = 0;
+    values.forEach(function (row, i) {
+      var rowKey = String(row[keyCol - 1] || '').trim();
+      var m = rowKey.match(/^OUT-(\d+)$/);
+      if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+      var nm = row[nameCol - 1];
+      if (nm) byName[normalizeOutletName(nm)] = i;
+    });
+    function nextKey() { maxNum++; return 'OUT-' + pad4(maxNum); }
+
+    var backfillRows = {}; // row index in values array -> new key (existing row missing a KEY)
+    var newRows = []; // brand new outlet rows to append
+
+    pending.forEach(function (r) {
+      var target = normalizeOutletName(r[cfg.nameField]);
+      if (byName.hasOwnProperty(target)) {
+        var idx = byName[target];
+        var existingKey = String(values[idx][keyCol - 1] || '').trim();
+        if (existingKey) {
+          r[cfg.keyField] = existingKey;
+        } else if (backfillRows[idx]) {
+          r[cfg.keyField] = backfillRows[idx];
+        } else {
+          var k = nextKey();
+          backfillRows[idx] = k;
+          values[idx][keyCol - 1] = k;
+          r[cfg.keyField] = k;
+        }
+      } else {
+        var newKey = nextKey();
+        var newRowArr = new Array(lastCol).fill('');
+        newRowArr[nameCol - 1] = String(r[cfg.nameField]).trim();
+        newRowArr[keyCol - 1] = newKey;
+        byName[target] = values.length + newRows.length; // so duplicate names within this same batch resolve consistently
+        newRows.push(newRowArr);
+        r[cfg.keyField] = newKey;
+      }
+    });
+
+    // tulis balik: backfill KEY yang kosong pada baris lama + tambahkan outlet baru,
+    // masing-masing dalam SATU panggilan setValues (bukan satu per baris)
+    var backfillIdxs = Object.keys(backfillRows).map(Number);
+    if (backfillIdxs.length) {
+      backfillIdxs.forEach(function (idx) {
+        sheet.getRange(2 + idx, keyCol).setValue(values[idx][keyCol - 1]);
+      });
+    }
+    if (newRows.length) {
+      sheet.getRange(lastRow + 1, 1, newRows.length, lastCol).setValues(newRows);
+    }
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 // Cari KEY outlet berdasar nama (cocok longgar: trim + lowercase + tanda baca
 // diseragamkan). Kalau belum ada di MASTER OUTLET, baris baru otomatis dibuat.
+// (Dipakai untuk save satu baris di doPost; untuk bulk_upsert pakai
+// resolveOutletKeysBatch di atas supaya tidak baca ulang sheet per baris.)
 function getOrCreateOutletKey(name) {
   var trimmed = String(name || '').trim();
   if (!trimmed) return '';
@@ -6442,6 +6578,7 @@ document.getElementById('transForm').addEventListener('submit', async (e) => {
   transFormStatusEl.className = 'form-status';
 
   const savedRows = [];
+  userSaveInFlight = true;
   try{
     for(const line of finalLines){
       const row = await saveTransRow(sales, tanggal, konsumen, tipeOutlet, keteranganToSave, line);
@@ -6468,6 +6605,7 @@ document.getElementById('transForm').addEventListener('submit', async (e) => {
   } finally {
     transFormSubmitBtn.disabled = false;
     transAddItemBtn.disabled = false;
+    userSaveInFlight = false;
   }
 });
 
@@ -7796,14 +7934,11 @@ document.getElementById('promoDetailPdfBtn').addEventListener('click', () => {
 });
 
 // ---------- Kelola Pricelist ----------
-const pricelistManagerOverlay = document.getElementById('pricelistManagerOverlay');
-const managePricelistBtn = document.getElementById('managePricelistBtn');
-const pricelistManagerClose = document.getElementById('pricelistManagerClose');
-const plMgrBody = document.getElementById('plMgrBody');
-const plMgrSearch = document.getElementById('plMgrSearch');
-const plMgrKategoriFilter = document.getElementById('plMgrKategoriFilter');
-const plMgrStatus = document.getElementById('plMgrStatus');
-let plMgrDraft = [];
+// NOTE: DOM refs (pricelistManagerOverlay, plMgrStatus, dst.) dipindah ke dekat awal
+// script (sebelum initDataSource IIFE) karena pullPricelistFromSheets() dipanggil
+// otomatis saat halaman dimuat, dan itu butuh plMgrStatus sudah terisi -- kalau
+// const-nya masih di sini (di bawah), akan kena ReferenceError "Cannot access
+// 'plMgrStatus' before initialization" karena belum sempat dieksekusi.
 
 function renderPricelistMgrTable(){
   const q = plMgrSearch.value.trim().toLowerCase();
