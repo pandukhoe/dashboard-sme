@@ -1011,7 +1011,9 @@
             <input type="text" id="dsWriteSecret" class="ds-input" placeholder="Samakan dengan SECRET di kode Apps Script">
             <div class="ds-actions">
               <button class="ds-btn-primary" id="dsSaveWriteBtn" type="button">Simpan Pengaturan</button>
+              <button class="ds-btn-secondary" id="dsTestWriteBtn" type="button">&#128225; Test Koneksi</button>
             </div>
+            <div class="ds-status" id="dsTestWriteStatus"></div>
 
             <div class="ds-divider"></div>
             <div class="ds-title">Auto Sync &amp; Muat Otomatis</div>
@@ -1330,7 +1332,7 @@
       <div class="section-head">
         <span class="idx">01</span><h2>Pengajuan Biaya Marketing</h2>
       </div>
-      <p class="ds-desc">Susun promo &amp; gimmick untuk satu event/periode sekaligus — harga produk otomatis dari Pricelist. Setelah disimpan bisa didownload sebagai PDF pengajuan, disisipkan ke outlet tertentu, dan dievaluasi hasilnya setelah berjalan.</p>
+      <p class="ds-desc">Susun promo &amp; gimmick untuk satu pengajuan sekaligus — harga produk otomatis dari Pricelist. Tiap promo bisa punya periodenya sendiri-sendiri. Setelah disimpan bisa didownload sebagai PDF pengajuan, disisipkan ke outlet tertentu, dan dievaluasi hasilnya setelah berjalan.</p>
 
       <div class="card">
         <div class="form-grid">
@@ -1343,22 +1345,17 @@
             <input type="text" id="promoKeterangan" placeholder="mis. Event Cooking Demo Plampitan">
           </div>
           <div class="form-field">
-            <label>Periode Mulai</label>
-            <input type="date" id="promoPeriodeMulai">
-          </div>
-          <div class="form-field">
-            <label>Periode Selesai</label>
-            <input type="date" id="promoPeriodeSelesai">
-          </div>
-          <div class="form-field">
-            <label>Target Penjualan (Rp)</label>
-            <input type="number" id="promoTargetPenjualan" min="0" placeholder="0">
+            <label>Target Penjualan (Rp) <span style="color:var(--ink-dim);font-weight:400;">(opsional)</span></label>
+            <input type="number" id="promoTargetPenjualan" min="0" placeholder="Kosongkan jika tidak ada target">
           </div>
         </div>
         <div class="detail-section" style="margin-top:4px;">
-          <div class="detail-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="detail-section-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <span>Tanda Tangan &amp; Persetujuan</span>
-            <label class="trans-check" style="font-weight:400;"><input type="checkbox" id="promoSignEnabled" checked> Sertakan di PDF</label>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <label class="trans-check" style="font-weight:400;"><input type="checkbox" id="promoSignEnabled" checked> Sertakan di PDF</label>
+              <button type="button" class="ds-btn-secondary" id="promoSignToggleBtn" style="padding:4px 10px;font-size:11px;">&#9650; Sembunyikan</button>
+            </div>
           </div>
           <div id="promoSignFieldsWrap">
             <div class="form-grid">
@@ -1388,6 +1385,14 @@
           <div class="form-field">
             <label>Est. Qty <span style="color:var(--ink-dim);font-weight:400;">(buat estimasi biaya)</span></label>
             <input type="number" id="promoEstQty" min="1" value="1">
+          </div>
+          <div class="form-field">
+            <label>Periode Mulai <span style="color:var(--ink-dim);font-weight:400;">(khusus promo ini)</span></label>
+            <input type="date" id="promoItemPeriodeMulai">
+          </div>
+          <div class="form-field">
+            <label>Periode Selesai <span style="color:var(--ink-dim);font-weight:400;">(khusus promo ini)</span></label>
+            <input type="date" id="promoItemPeriodeSelesai">
           </div>
           <div class="form-field form-field-wide">
             <label>Tipe Harga (berlaku untuk kalkulator di bawah)</label>
@@ -2051,6 +2056,27 @@ async function fetchWithRetry(url, options, retries){
     }
   }
   throw lastErr;
+}
+
+// Google Apps Script Web App kadang membalas HALAMAN LOGIN GOOGLE (bukan JSON) kalau
+// deployment-nya belum di-set "Who has access: Anyone", URL-nya salah, atau
+// deployment lama belum di-update ke versi kode terbaru. fetch() tetap menganggap
+// respons semacam itu sebagai 200 OK, jadi kalau ini tidak dideteksi di sini,
+// dashboard bisa keliru bilang "tersimpan ✓" padahal Apps Script-nya tidak pernah
+// benar-benar menulis apapun ke sheet -- baru ketahuan belakangan waktu auto-sync
+// menarik ulang data asli dari sheet dan baris yang "tersimpan" itu menghilang lagi
+// dari dashboard. Fungsi ini membaca body sebagai teks dulu, baru coba parse JSON;
+// kalau gagal, dilempar sebagai error yang jelas alih-alih diam-diam dianggap sukses.
+async function parseWriteResult(res){
+  const text = await res.text();
+  let result;
+  try{
+    result = JSON.parse(text);
+  } catch(e){
+    throw new Error('Respons Apps Script bukan JSON (kemungkinan URL salah, deployment belum di-set "Who has access: Anyone", atau deployment belum di-update ke versi kode terbaru). Data BELUM tersimpan ke sheet -- cek lagi pengaturan deploy-nya.');
+  }
+  if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+  return result;
 }
 
 function normStatusOutlet(v){ return v === 'NOO' ? 'Outlet Baru' : v; }
@@ -3593,6 +3619,39 @@ document.getElementById('dsSaveWriteBtn').onclick = () => {
   persistConfig();
   dsSetStatus('Pengaturan tujuan simpan kunjungan tersimpan.', 'ok');
 };
+// Test Koneksi: kirim ping kecil ke Apps Script (tidak menulis apapun ke sheet)
+// buat memastikan deployment-nya benar-benar bisa diakses & menjalankan kode
+// terbaru -- tanpa perlu coba-coba submit transaksi/kunjungan beneran dulu.
+// Kalau responsnya bukan JSON (mis. halaman login Google), parseWriteResult akan
+// melempar error yang jelas alih-alih dianggap diam-diam berhasil.
+document.getElementById('dsTestWriteBtn').onclick = async () => {
+  const statusEl = document.getElementById('dsTestWriteStatus');
+  const writeUrl = dsWriteUrlEl.value.trim();
+  if(!writeUrl){
+    statusEl.textContent = 'Isi dulu URL Apps Script di atas.';
+    statusEl.className = 'ds-status err';
+    return;
+  }
+  statusEl.textContent = 'Menguji koneksi...';
+  statusEl.className = 'ds-status';
+  try{
+    const payload = { __mode: 'ping' };
+    const writeSecret = dsWriteSecretEl.value.trim();
+    if(writeSecret) payload.secret = writeSecret;
+    const res = await fetchWithRetry(writeUrl, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
+    });
+    const result = await parseWriteResult(res);
+    statusEl.textContent = `&#9989; Terhubung ke spreadsheet "${result.spreadsheet || '?'}" &mdash; deployment aktif & kode Apps Script sudah versi terbaru (mendukung __mode:'ping').`;
+    statusEl.innerHTML = statusEl.textContent;
+    statusEl.className = 'ds-status ok';
+  } catch(err){
+    statusEl.textContent = `&#10060; ${err.message}`;
+    statusEl.innerHTML = statusEl.textContent;
+    statusEl.className = 'ds-status err';
+    console.error('Test koneksi error:', err);
+  }
+};
 function setupAutoRefresh(){
   if(dsAutoTimer){ clearInterval(dsAutoTimer); dsAutoTimer = null; }
   if(dsAutoRefreshEl.checked && dsLiveMode){
@@ -3807,8 +3866,7 @@ visitForm.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight against Apps Script
       body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
 
     // optimistic local update so the dashboard reflects it immediately
     let kategoriDerived, alasanDerived;
@@ -3918,6 +3976,10 @@ function doPost(e) {
 
     if (data.__mode === 'geocode_wilayah') {
       return handleGeocodeWilayah(data);
+    }
+
+    if (data.__mode === 'ping') {
+      return jsonOutput({ ok: true, spreadsheet: SpreadsheetApp.getActiveSpreadsheet().getName() });
     }
 
     // default mode: append a single row (dipakai "Input Kunjungan" -> LOG VISIT,
@@ -4733,8 +4795,7 @@ async function pushOutletsToSheets(list){
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
     return { ok:true, updated:result.updated, inserted:result.inserted };
   } catch(err){
     console.error('Outlet sync error:', err);
@@ -5754,8 +5815,7 @@ async function pushScheduleToSheets(){
     const res = await fetchWithRetry(writeUrl, {
       method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
     scheduleStatusEl.textContent = `Tersinkron ke sheet JADWAL MINGGUAN (${result.updated||0} update, ${result.inserted||0} baru).`;
     scheduleStatusEl.className = 'form-status ok';
   } catch(err){
@@ -6316,8 +6376,7 @@ async function saveTransRow(sales, tanggal, konsumen, tipeOutlet, keterangan, li
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload),
   });
-  const result = await res.json().catch(() => ({ ok: res.ok }));
-  if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+  const result = await parseWriteResult(res);
   return {
     sales, tanggal, _date: parseDate(tanggal),
     invoice: null,
@@ -6415,6 +6474,8 @@ document.getElementById('transForm').addEventListener('submit', async (e) => {
 // ---------- Kalkulator Promo -> Pengajuan Biaya Marketing (multi-item, per periode) ----------
 let promoType = 'diskon';
 let promoBundleItems = [{ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+let promoBxgyBeliItems = [{ id:'pbxb'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+let promoBxgyGratisItems = [{ id:'pbxg'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
 let promoBuilderList = []; // promo item yang sedang disusun buat pengajuan yang belum disimpan
 let promoBuilderGimmicks = []; // paket gimmick yang sedang disusun
 
@@ -6494,29 +6555,31 @@ function renderPromoTypeBody(){
     renderPromoBundleItems();
   } else if(promoType === 'bxgy'){
     body.innerHTML = `
-      <div class="form-grid">
-        <div class="form-field form-field-wide">
-          <label>Produk Dibeli</label>
-          <input type="text" id="promoBxgyBeliProduk" list="produkDatalistTrans" placeholder="Ketik nama produk..." autocomplete="off">
-        </div>
-        <div class="form-field">
-          <label>Qty Dibeli</label>
-          <input type="number" id="promoBxgyBeliQty" min="1" value="1">
-        </div>
-        <div class="form-field form-field-wide">
-          <label>Produk Gratis <span style="color:var(--ink-dim);font-weight:400;">(kosongkan kalau produknya sama dengan yang dibeli)</span></label>
-          <input type="text" id="promoBxgyGratisProduk" list="produkDatalistTrans" placeholder="Ketik nama produk..." autocomplete="off">
-        </div>
-        <div class="form-field">
-          <label>Qty Gratis</label>
-          <input type="number" id="promoBxgyGratisQty" min="1" value="1">
-        </div>
+      <div class="promo-subhead" style="margin-bottom:6px;">
+        <label style="font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);">Produk Dibeli <span style="text-transform:none;font-weight:400;">(boleh lebih dari 1 produk, digabung jadi satu syarat)</span></label>
       </div>
+      <div id="promoBxgyBeliItemsWrap"></div>
+      <button type="button" class="ds-btn-secondary" id="promoBxgyBeliAddBtn" style="margin-top:2px;">&#43; Tambah Produk Dibeli</button>
+
+      <div class="promo-subhead" style="margin:18px 0 6px;">
+        <label style="font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-dim);">Produk Gratis <span style="text-transform:none;font-weight:400;">(boleh lebih dari 1 produk)</span></label>
+      </div>
+      <div id="promoBxgyGratisItemsWrap"></div>
+      <button type="button" class="ds-btn-secondary" id="promoBxgyGratisAddBtn" style="margin-top:2px;">&#43; Tambah Produk Gratis</button>
+
+      <p class="promo-bxgy-ratio-hint" style="font-size:11px;color:var(--ink-dim);margin:12px 0 0;">&#128161; Rasio &amp; kombinasi bebas — mis. Beli 2 Lada Putih + 2 Lada Hitam, Gratis 1 Bawang Putih. Qty tiap baris tidak harus sama.</p>
       <div class="promo-free-reco" id="promoFreeRecoWrap"></div>
       <div class="promo-bxgy-reco" id="promoBxgyRecoWrap"></div>`;
-    ['promoBxgyBeliProduk','promoBxgyBeliQty','promoBxgyGratisProduk','promoBxgyGratisQty'].forEach(id => {
-      document.getElementById(id).addEventListener('input', computePromoResult);
+    document.getElementById('promoBxgyBeliAddBtn').addEventListener('click', () => {
+      promoBxgyBeliItems.push({ id:'pbxb'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 });
+      renderPromoBxgyBeliItems();
     });
+    document.getElementById('promoBxgyGratisAddBtn').addEventListener('click', () => {
+      promoBxgyGratisItems.push({ id:'pbxg'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 });
+      renderPromoBxgyGratisItems();
+    });
+    renderPromoBxgyBeliItems();
+    renderPromoBxgyGratisItems();
   } else if(promoType === 'bundling'){
     body.innerHTML = `
       <div id="promoBundleItemsWrap"></div>
@@ -6598,6 +6661,72 @@ function renderPromoBundleItems(){
     });
   });
   computePromoResult();
+}
+
+// Beli X Gratis Y: dua daftar produk terpisah (dibeli & gratis), masing-masing boleh
+// berisi lebih dari satu produk dengan qty sendiri-sendiri -- misal syarat belinya
+// gabungan "2x Lada Putih + 2x Lada Hitam" buat dapat "1x Bawang Putih" gratis.
+// `items` di-passing by reference lewat getter/setter closure supaya satu fungsi
+// render bisa dipakai untuk kedua daftar (dibeli & gratis).
+function renderPromoBxgyItemList(wrapId, getItems, setItems, idPrefix){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const items = getItems();
+  wrap.innerHTML = items.map(it => {
+    const resolved = resolvePromoProduk(it.produkLabel);
+    const harga = resolved ? (lookupPromoPrice(resolved)||0) : 0;
+    const subtotal = harga * (it.qty||0);
+    return `
+    <div class="promo-bundle-item" data-id="${it.id}">
+      <input type="text" class="${idPrefix}-produk" list="produkDatalistTrans" data-id="${it.id}" value="${(it.produkLabel||'').replace(/"/g,'&quot;')}" placeholder="Ketik nama produk..." autocomplete="off">
+      <input type="number" class="${idPrefix}-qty" data-id="${it.id}" min="1" value="${it.qty}">
+      <span class="pbi-subtotal num" data-id="${it.id}">${subtotal ? fmtRupiah(subtotal) : '—'}</span>
+      <button type="button" class="trans-item-del" data-id="${it.id}" title="Hapus item">&times;</button>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll(`.${idPrefix}-produk`).forEach(input => {
+    input.addEventListener('input', () => {
+      const list = getItems();
+      const it = list.find(x => x.id === input.dataset.id);
+      if(it) it.produkLabel = input.value;
+      computePromoResult();
+      // Update subtotal saja tanpa render ulang seluruh baris, biar fokus & kursor
+      // di input teks tidak hilang saat sedang mengetik nama produk.
+      const resolved = it ? resolvePromoProduk(it.produkLabel) : null;
+      const harga = resolved ? (lookupPromoPrice(resolved)||0) : 0;
+      const subtotal = harga * (it && it.qty || 0);
+      const subEl = wrap.querySelector(`.pbi-subtotal[data-id="${input.dataset.id}"]`);
+      if(subEl) subEl.textContent = subtotal ? fmtRupiah(subtotal) : '—';
+    });
+  });
+  wrap.querySelectorAll(`.${idPrefix}-qty`).forEach(input => {
+    input.addEventListener('input', () => {
+      const list = getItems();
+      const it = list.find(x => x.id === input.dataset.id);
+      if(it) it.qty = parseFloat(input.value) || 0;
+      computePromoResult();
+      const resolved = it ? resolvePromoProduk(it.produkLabel) : null;
+      const harga = resolved ? (lookupPromoPrice(resolved)||0) : 0;
+      const subtotal = harga * (it && it.qty || 0);
+      const subEl = wrap.querySelector(`.pbi-subtotal[data-id="${input.dataset.id}"]`);
+      if(subEl) subEl.textContent = subtotal ? fmtRupiah(subtotal) : '—';
+    });
+  });
+  wrap.querySelectorAll('.trans-item-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      let list = getItems().filter(x => x.id !== btn.dataset.id);
+      if(!list.length) list.push({ id: idPrefix+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 });
+      setItems(list);
+      renderPromoBxgyItemList(wrapId, getItems, setItems, idPrefix);
+    });
+  });
+  computePromoResult();
+}
+function renderPromoBxgyBeliItems(){
+  renderPromoBxgyItemList('promoBxgyBeliItemsWrap', () => promoBxgyBeliItems, (list) => { promoBxgyBeliItems = list; }, 'pbxb');
+}
+function renderPromoBxgyGratisItems(){
+  renderPromoBxgyItemList('promoBxgyGratisItemsWrap', () => promoBxgyGratisItems, (list) => { promoBxgyGratisItems = list; }, 'pbxg');
 }
 
 function setPromoResult(hargaNormal, hargaPromo){
@@ -6716,21 +6845,21 @@ function renderDiscountPctReco(wrapId, inputId, modeRadioName, hargaNormalTotalG
 function renderPromoFreeReco(){
   const wrap = document.getElementById('promoFreeRecoWrap');
   if(!wrap) return;
-  const beliInput = document.getElementById('promoBxgyBeliProduk');
-  if(!beliInput) return;
-  const beliItem = resolvePromoProduk(beliInput.value);
-  if(!beliItem){ wrap.innerHTML = ''; return; }
-  const beliQty = parseFloat(document.getElementById('promoBxgyBeliQty').value) || 0;
-  const hargaBeliSatuan = lookupPromoPrice(beliItem) || 0;
-  const totalBeli = hargaBeliSatuan * beliQty;
+  const validBeli = promoBxgyBeliItems
+    .map(it => ({ it, item: resolvePromoProduk(it.produkLabel) }))
+    .filter(x => x.item);
+  if(!validBeli.length){ wrap.innerHTML = ''; return; }
+  const totalBeli = validBeli.reduce((s,x) => s + (lookupPromoPrice(x.item)||0) * (x.it.qty||0), 0);
   if(!totalBeli){ wrap.innerHTML = ''; return; }
 
   const budget15 = totalBeli * 0.15;
-  const gratisTyped = document.getElementById('promoBxgyGratisProduk').value.trim().toLowerCase();
+  const gratisTypedSet = new Set(
+    promoBxgyGratisItems.map(g => (g.produkLabel||'').trim().toLowerCase()).filter(Boolean)
+  );
 
   const kandidat = PRICELIST
     .map((item, idx) => ({ idx, harga: lookupPromoPrice(item) || 0 }))
-    .filter(x => x.harga > 0 && x.harga <= budget15 && produkLabel(x.idx).toLowerCase() !== gratisTyped)
+    .filter(x => x.harga > 0 && x.harga <= budget15 && !gratisTypedSet.has(produkLabel(x.idx).toLowerCase()))
     .sort((a,b) => b.harga - a.harga) // paling mahal dulu selama masih dalam budget -- lebih menarik
     .slice(0, 8);
 
@@ -6751,7 +6880,13 @@ function renderPromoFreeReco(){
     </div>`;
   wrap.querySelectorAll('.promo-free-reco-pill').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.getElementById('promoBxgyGratisProduk').value = produkLabel(+btn.dataset.idx);
+      const label = produkLabel(+btn.dataset.idx);
+      // Isi baris gratis kosong pertama kalau ada, kalau tidak ada tambah baris baru --
+      // jadi klik rekomendasi bisa dipakai berkali-kali buat menambah beberapa hadiah.
+      const emptySlot = promoBxgyGratisItems.find(g => !g.produkLabel.trim());
+      if(emptySlot){ emptySlot.produkLabel = label; }
+      else { promoBxgyGratisItems.push({ id:'pbxg'+Math.random().toString(36).slice(2,8), produkLabel: label, qty:1 }); }
+      renderPromoBxgyGratisItems();
       computePromoResult();
     });
   });
@@ -6760,18 +6895,15 @@ function renderPromoFreeReco(){
 function renderPromoBxgyReco(){
   const wrap = document.getElementById('promoBxgyRecoWrap');
   if(!wrap) return;
-  const beliInput = document.getElementById('promoBxgyBeliProduk');
-  if(!beliInput) return;
-  const beliItem = resolvePromoProduk(beliInput.value);
-  if(!beliItem){ wrap.innerHTML = ''; return; }
-  const beliQty = parseFloat(document.getElementById('promoBxgyBeliQty').value) || 0;
-  const gratisLabel = document.getElementById('promoBxgyGratisProduk').value.trim();
-  const gratisItem = gratisLabel ? resolvePromoProduk(gratisLabel) : beliItem;
-  const gratisQty = parseFloat(document.getElementById('promoBxgyGratisQty').value) || 0;
-  const hargaBeliSatuan = lookupPromoPrice(beliItem) || 0;
-  const hargaGratisSatuan = gratisItem ? (lookupPromoPrice(gratisItem) || 0) : 0;
-  const totalDibayar = hargaBeliSatuan * beliQty;
-  const nilaiGratis = hargaGratisSatuan * gratisQty;
+  const validBeli = promoBxgyBeliItems
+    .map(it => resolvePromoProduk(it.produkLabel) ? { qty: it.qty||0, harga: lookupPromoPrice(resolvePromoProduk(it.produkLabel))||0 } : null)
+    .filter(Boolean);
+  if(!validBeli.length){ wrap.innerHTML = ''; return; }
+  const validGratis = promoBxgyGratisItems
+    .map(it => resolvePromoProduk(it.produkLabel) ? { qty: it.qty||0, harga: lookupPromoPrice(resolvePromoProduk(it.produkLabel))||0 } : null)
+    .filter(Boolean);
+  const totalDibayar = validBeli.reduce((s,x) => s + x.harga*x.qty, 0);
+  const nilaiGratis = validGratis.reduce((s,x) => s + x.harga*x.qty, 0);
   const hargaNormal = totalDibayar + nilaiGratis;
   if(!hargaNormal){ wrap.innerHTML = ''; return; }
   const pct = Math.round(nilaiGratis / hargaNormal * 100);
@@ -6816,6 +6948,8 @@ function computePromoResult(){
 function buildCurrentPromoEntry(silent){
   const nama = document.getElementById('promoItemNama').value.trim();
   const estQty = parseFloat(document.getElementById('promoEstQty').value) || 0;
+  const periodeMulai = document.getElementById('promoItemPeriodeMulai').value || null;
+  const periodeSelesai = document.getElementById('promoItemPeriodeSelesai').value || null;
 
   if(promoType === 'diskon'){
     const validItems = promoBundleItems.filter(it => resolvePromoProduk(it.produkLabel));
@@ -6838,24 +6972,37 @@ function buildCurrentPromoEntry(silent){
     return { nama: nama || `Diskon ${mode==='persen' ? nilai+'%' : fmtRupiah(nilai)}`, jenis:'Diskon',
       produkItem: namaList.join(', '),
       detail: `Diskon ${mode==='persen' ? nilai+'%' : fmtRupiah(nilai)} untuk ${validItems.length} produk`,
-      hargaNormal, hargaPromo, estQty };
+      hargaNormal, hargaPromo, estQty, periodeMulai, periodeSelesai };
   }
   if(promoType === 'bxgy'){
-    const beliInput = document.getElementById('promoBxgyBeliProduk');
-    const beliItem = resolvePromoProduk(beliInput.value);
-    if(!beliItem) return silent ? null : { error: 'Pilih produk yang dibeli dulu.' };
-    const beliQty = parseFloat(document.getElementById('promoBxgyBeliQty').value) || 0;
-    const gratisLabel = document.getElementById('promoBxgyGratisProduk').value.trim();
-    const gratisItem = gratisLabel ? resolvePromoProduk(gratisLabel) : beliItem;
-    const gratisQty = parseFloat(document.getElementById('promoBxgyGratisQty').value) || 0;
-    const hargaBeliSatuan = lookupPromoPrice(beliItem) || 0;
-    const hargaGratisSatuan = gratisItem ? (lookupPromoPrice(gratisItem) || 0) : 0;
-    const totalDibayar = hargaBeliSatuan * beliQty;
-    const hargaNormal = totalDibayar + (hargaGratisSatuan * gratisQty);
+    const validBeli = promoBxgyBeliItems.filter(it => resolvePromoProduk(it.produkLabel));
+    if(!validBeli.length) return silent ? null : { error: 'Pilih minimal 1 produk yang dibeli dulu.' };
+    const validGratis = promoBxgyGratisItems.filter(it => resolvePromoProduk(it.produkLabel));
+    if(!validGratis.length) return silent ? null : { error: 'Pilih minimal 1 produk gratis dulu.' };
+
+    let totalDibayar = 0;
+    const beliNamaList = [];
+    validBeli.forEach(it => {
+      const item = resolvePromoProduk(it.produkLabel);
+      const harga = lookupPromoPrice(item) || 0;
+      const qty = it.qty || 0;
+      totalDibayar += harga * qty;
+      beliNamaList.push(`${qty}x ${it.produkLabel}`);
+    });
+    let nilaiGratis = 0;
+    const gratisNamaList = [];
+    validGratis.forEach(it => {
+      const item = resolvePromoProduk(it.produkLabel);
+      const harga = lookupPromoPrice(item) || 0;
+      const qty = it.qty || 0;
+      nilaiGratis += harga * qty;
+      gratisNamaList.push(`${qty}x ${it.produkLabel}`);
+    });
+    const hargaNormal = totalDibayar + nilaiGratis;
     if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
-    return { nama: nama || `Beli ${beliInput.value.trim()} Gratis ${gratisLabel||beliInput.value.trim()}`,
-      jenis:'Beli X Free Y', produkItem: `${beliInput.value.trim()} + ${gratisLabel || beliInput.value.trim()}`,
-      detail: `Beli ${beliQty} Gratis ${gratisQty}`, hargaNormal, hargaPromo: totalDibayar, estQty };
+    return { nama: nama || `Beli ${beliNamaList.join(' + ')} Gratis ${gratisNamaList.join(' + ')}`,
+      jenis:'Beli X Free Y', produkItem: `${beliNamaList.join(' + ')} \u2192 Gratis ${gratisNamaList.join(' + ')}`,
+      detail: `Beli ${beliNamaList.join(' + ')}, Gratis ${gratisNamaList.join(' + ')}`, hargaNormal, hargaPromo: totalDibayar, estQty, periodeMulai, periodeSelesai };
   }
   if(promoType === 'bundling'){
     const hargaBundleInput = document.getElementById('promoBundleHarga');
@@ -6871,7 +7018,7 @@ function buildCurrentPromoEntry(silent){
     const hargaPromo = parseFloat(hargaBundleInput.value) || 0;
     if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
     return { nama: nama || 'Bundling', jenis:'Bundling', produkItem: namaList.join(' + '),
-      detail: `Bundle ${validItems.length} item`, hargaNormal, hargaPromo, estQty };
+      detail: `Bundle ${validItems.length} item`, hargaNormal, hargaPromo, estQty, periodeMulai, periodeSelesai };
   }
   // minbeli
   const nominalInput = document.getElementById('promoMinBeliNominal');
@@ -6884,7 +7031,7 @@ function buildCurrentPromoEntry(silent){
   if(!silent && !nama) return { error: 'Isi Nama Promo Ini dulu.' };
   return { nama: nama || 'Min. Pembelian', jenis:'Min. Pembelian', produkItem: keterangan || 'Semua Produk',
     detail: `Min. beli ${fmtRupiah(nominal)}, diskon ${mode==='persen'?diskon+'%':fmtRupiah(diskon)}`,
-    hargaNormal: nominal, hargaPromo, estQty };
+    hargaNormal: nominal, hargaPromo, estQty, periodeMulai, periodeSelesai };
 }
 
 document.getElementById('promoAddToListBtn').addEventListener('click', () => {
@@ -6901,6 +7048,8 @@ document.getElementById('promoAddToListBtn').addEventListener('click', () => {
   document.getElementById('promoItemNama').value = '';
   document.getElementById('promoEstQty').value = 1;
   promoBundleItems = [{ id:'pbi'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+  promoBxgyBeliItems = [{ id:'pbxb'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
+  promoBxgyGratisItems = [{ id:'pbxg'+Math.random().toString(36).slice(2,8), produkLabel:'', qty:1 }];
   renderPromoTypeBody();
   statusEl.textContent = 'Ditambahkan ke daftar \u2713';
   statusEl.className = 'form-status ok';
@@ -6914,7 +7063,7 @@ function renderPromoBuilderList(){
     <div class="promo-list-item" data-id="${p.id}">
       <div class="promo-list-item-main">
         <b>${(p.nama||'').replace(/</g,'&lt;')}</b>
-        <span>${(p.produkItem||'').replace(/</g,'&lt;')} &middot; ${(p.jenis||'').replace(/</g,'&lt;')} &middot; Est. Qty ${p.estQty||0}</span>
+        <span>${(p.produkItem||'').replace(/</g,'&lt;')} &middot; ${(p.jenis||'').replace(/</g,'&lt;')} &middot; Est. Qty ${p.estQty||0}${p.periodeMulai ? ` &middot; ${fmtDateShort(parseDate(p.periodeMulai))}${p.periodeSelesai && p.periodeSelesai!==p.periodeMulai ? ' – '+fmtDateShort(parseDate(p.periodeSelesai)) : ''}` : ''}</span>
       </div>
       <div class="promo-list-item-price">
         <span class="old">${fmtRupiah(p.hargaNormal)}</span>
@@ -7047,11 +7196,14 @@ document.getElementById('promoTargetPenjualan').addEventListener('input', () => 
 document.getElementById('promoEstQty').addEventListener('input', computePromoResult);
 
 function resetPromoBuilder(){
-  ['promoPic','promoKeterangan','promoPeriodeMulai','promoPeriodeSelesai','promoTargetPenjualan'].forEach(id => { document.getElementById(id).value = ''; });
+  ['promoPic','promoKeterangan','promoTargetPenjualan'].forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('promoItemNama').value = '';
   document.getElementById('promoEstQty').value = 1;
+  document.getElementById('promoItemPeriodeMulai').value = '';
+  document.getElementById('promoItemPeriodeSelesai').value = '';
   document.getElementById('promoSignEnabled').checked = true;
   document.getElementById('promoSignFieldsWrap').hidden = false;
+  document.getElementById('promoSignToggleBtn').innerHTML = '&#9650; Sembunyikan';
   applySignatureTemplate();
   promoBuilderList = [];
   promoBuilderGimmicks = [];
@@ -7081,8 +7233,15 @@ function applySignatureTemplate(){
 }
 applySignatureTemplate(); // isi pertama kali script jalan
 
-document.getElementById('promoSignEnabled').addEventListener('change', (e) => {
-  document.getElementById('promoSignFieldsWrap').hidden = !e.target.checked;
+// Checkbox "Sertakan di PDF" cuma menentukan apakah blok TTD ikut muncul di dokumen
+// PDF yang di-generate -- tidak lagi menyembunyikan form-nya di dashboard. Untuk
+// menyembunyikan/menampilkan form-nya sendiri (biar hemat tempat di layar), dipakai
+// tombol toggle terpisah di sebelahnya.
+const promoSignToggleBtn = document.getElementById('promoSignToggleBtn');
+const promoSignFieldsWrapEl = document.getElementById('promoSignFieldsWrap');
+promoSignToggleBtn.addEventListener('click', () => {
+  promoSignFieldsWrapEl.hidden = !promoSignFieldsWrapEl.hidden;
+  promoSignToggleBtn.innerHTML = promoSignFieldsWrapEl.hidden ? '&#9660; Tampilkan' : '&#9650; Sembunyikan';
 });
 
 document.getElementById('promoSignSaveTemplateBtn').addEventListener('click', () => {
@@ -7130,12 +7289,17 @@ document.getElementById('promoSaveBtn').addEventListener('click', () => {
   }
   const targetPenjualan = parseFloat(document.getElementById('promoTargetPenjualan').value) || 0;
   const sertakanTtd = document.getElementById('promoSignEnabled').checked;
+  // Periode pengajuan sekarang ditentukan per promo (bukan satu periode di header),
+  // jadi periode keseluruhan buat ringkasan kartu/PDF dihitung dari rentang
+  // (paling awal - paling akhir) periode semua promo di daftar ini.
+  const semuaMulai = promoBuilderList.map(p => p.periodeMulai).filter(Boolean).sort();
+  const semuaSelesai = promoBuilderList.map(p => p.periodeSelesai || p.periodeMulai).filter(Boolean).sort();
   const proposal = {
     id: genPromoId(),
     pic: document.getElementById('promoPic').value.trim(),
     keterangan,
-    periodeMulai: document.getElementById('promoPeriodeMulai').value || null,
-    periodeSelesai: document.getElementById('promoPeriodeSelesai').value || null,
+    periodeMulai: semuaMulai.length ? semuaMulai[0] : null,
+    periodeSelesai: semuaSelesai.length ? semuaSelesai[semuaSelesai.length-1] : null,
     targetPenjualan,
     sertakanTtd,
     ttdDibuatNama: document.getElementById('promoTtdDibuatNama').value.trim(),
@@ -7205,8 +7369,7 @@ async function pushPromosToSheets(){
     const res = await fetchWithRetry(writeUrl, {
       method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
     return { ok:true };
   } catch(err){
     console.error('Push promo error:', err);
@@ -7301,8 +7464,8 @@ function openPromoDetail(proposal){
   const periode = proposal.periodeMulai ? `${fmtDateShort(parseDate(proposal.periodeMulai))}${proposal.periodeSelesai && proposal.periodeSelesai!==proposal.periodeMulai ? ' – '+fmtDateShort(parseDate(proposal.periodeSelesai)) : ''}` : '-';
   document.getElementById('promoDetailSummary').innerHTML = `
     <div class="kpi-chip">PIC <b>${proposal.pic || '-'}</b></div>
-    <div class="kpi-chip">Periode <b>${periode}</b></div>
-    <div class="kpi-chip">Target Penjualan <b>${fmtRupiah(proposal.targetPenjualan||0)}</b></div>
+    <div class="kpi-chip">Periode (keseluruhan) <b>${periode}</b></div>
+    <div class="kpi-chip">Target Penjualan <b>${proposal.targetPenjualan ? fmtRupiah(proposal.targetPenjualan) : '-'}</b></div>
     <div class="kpi-chip">Total Biaya Marketing <b>${fmtRupiah(costs.totalBiayaMarketing)}</b></div>
   `;
   renderPromoDetailPromoList(proposal);
@@ -7355,7 +7518,7 @@ function renderPromoDetailPromoList(proposal){
     <div class="promo-list-item" style="padding-right:12px;" data-id="${p.id}">
       <div class="promo-list-item-main">
         <b>${(p.nama||'').replace(/</g,'&lt;')}</b>
-        <span>${(p.produkItem||'').replace(/</g,'&lt;')} &middot; ${fmtRupiah(p.hargaNormal)} &rarr; ${fmtRupiah(p.hargaPromo)}</span>
+        <span>${(p.produkItem||'').replace(/</g,'&lt;')} &middot; ${fmtRupiah(p.hargaNormal)} &rarr; ${fmtRupiah(p.hargaPromo)}${p.periodeMulai ? ` &middot; ${fmtDateShort(parseDate(p.periodeMulai))}${p.periodeSelesai && p.periodeSelesai!==p.periodeMulai ? ' – '+fmtDateShort(parseDate(p.periodeSelesai)) : ''}` : ''}</span>
       </div>
       <div class="promo-eval-grid">
         <select class="pe-status" data-id="${p.id}">
@@ -7470,10 +7633,14 @@ function buildPromoPdfHtml(proposal){
 
   const promoRows = (proposal.promos||[]).map((p,i) => {
     const budgetPct = p.hargaNormal ? ((p.hargaNormal-p.hargaPromo)/p.hargaNormal*100) : 0;
+    const periodePromo = p.periodeMulai
+      ? `${fmtDateShort(parseDate(p.periodeMulai))}${p.periodeSelesai && p.periodeSelesai!==p.periodeMulai ? ' – '+fmtDateShort(parseDate(p.periodeSelesai)) : ''}`
+      : '-';
     return `<tr>
       <td>${i+1}</td>
       <td><div class="promo-name">${esc(p.nama)}</div><div class="promo-sub">${esc(p.produkItem)}</div></td>
       <td>${esc(p.jenis)}</td>
+      <td>${periodePromo}</td>
       <td class="num">${fmtRupiah(p.hargaNormal)}</td>
       <td class="num">${fmtRupiah(p.hargaPromo)}</td>
       <td class="num">${budgetPct.toFixed(2)}%</td>
@@ -7579,14 +7746,14 @@ function buildPromoPdfHtml(proposal){
     <div class="info-grid">
       <div><div class="info-label">PIC / Marketing</div><div class="info-value">${esc(proposal.pic) || '-'}</div></div>
       <div><div class="info-label">Keterangan</div><div class="info-value">${esc(proposal.keterangan)}</div></div>
-      <div><div class="info-label">Periode</div><div class="info-value">${periode}</div></div>
+      <div><div class="info-label">Periode (keseluruhan)</div><div class="info-value">${periode}</div></div>
     </div>
   </div>
 
   <div class="section">
     <div class="section-title">Daftar promo (${(proposal.promos||[]).length})</div>
     <table>
-      <thead><tr><th style="width:24px;">#</th><th>Nama Promo</th><th>Jenis</th><th class="num">Harga Normal</th><th class="num">Harga Promo</th><th class="num">Budget</th></tr></thead>
+      <thead><tr><th style="width:24px;">#</th><th>Nama Promo</th><th>Jenis</th><th>Periode</th><th class="num">Harga Normal</th><th class="num">Harga Promo</th><th class="num">Budget</th></tr></thead>
       <tbody>${promoRows}</tbody>
     </table>
   </div>
@@ -7596,7 +7763,7 @@ function buildPromoPdfHtml(proposal){
   <div class="section">
     <div class="section-title">Ringkasan biaya marketing</div>
     <div class="summary-grid">
-      <div class="summary-chip"><div class="label">Target Penjualan</div><div class="value">${fmtRupiah(proposal.targetPenjualan||0)}</div></div>
+      <div class="summary-chip"><div class="label">Target Penjualan</div><div class="value">${proposal.targetPenjualan ? fmtRupiah(proposal.targetPenjualan) : '-'}</div></div>
       <div class="summary-chip"><div class="label">Est. Biaya Diskon</div><div class="value">${fmtRupiah(costs.estBiayaDiskon)}</div></div>
       <div class="summary-chip"><div class="label">Biaya Gimmick</div><div class="value">${fmtRupiah(costs.biayaGimmick)}</div></div>
       <div class="summary-chip"><div class="label">Total Biaya Marketing</div><div class="value">${fmtRupiah(costs.totalBiayaMarketing)}</div></div>
@@ -7725,8 +7892,7 @@ async function pushPricelistToSheets(){
     const res = await fetchWithRetry(writeUrl, {
       method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
     plMgrStatus.textContent = `Tersimpan lokal & tersinkron ke sheet PRICELIST (${result.updated||0} update, ${result.inserted||0} baru).`;
     plMgrStatus.className = 'ds-status ok';
   } catch(err){
@@ -7896,8 +8062,7 @@ async function pushTargetsToSheets(){
     const res = await fetchWithRetry(writeUrl, {
       method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
     targetMgrStatus.textContent = `Tersimpan lokal & tersinkron ke sheet TARGET (${result.updated||0} update, ${result.inserted||0} baru).`;
     targetMgrStatus.className = 'ds-status ok';
     return { ok:true };
@@ -8652,8 +8817,7 @@ async function pushManualFollowupsToSheets(){
     const res = await fetchWithRetry(writeUrl, {
       method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(payload),
     });
-    const result = await res.json().catch(() => ({ ok: res.ok }));
-    if(!result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+    const result = await parseWriteResult(res);
     return { ok:true, updated:result.updated, inserted:result.inserted };
   } catch(err){
     console.error('Manual followup push error:', err);
