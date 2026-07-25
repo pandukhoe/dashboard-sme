@@ -3136,6 +3136,7 @@ function renderAll(){
   safe(() => renderTopKonsumenTable(ft), 'top-konsumen-table');
   safe(() => renderTables(fv, ft), 'tables');
   safe(() => { if(!tabPanelOutletSales.hidden) renderOutletSalesTable(); }, 'outlet-sales-table');
+  safe(() => { if(!tabPanelFollowUp.hidden) renderFollowUpTable(); }, 'follow-up-table');
 }
 document.getElementById('transTableSearch').addEventListener('input', () => {
   state.pageTrans = 1;
@@ -8571,6 +8572,10 @@ function getFilteredFollowUps(){
   const statusFilter = fuStatusFilterEl.value;
 
   let items = collectFollowUps();
+  // Ikut filter Sales GLOBAL (pill di bagian atas dashboard) juga, supaya konsisten
+  // dengan tab lain. Filter Sales lokal di section ini tetap bisa dipakai untuk
+  // mempersempit lagi kalau perlu.
+  if(state.sales !== 'all') items = items.filter(it => it.sales === state.sales);
   if(q) items = items.filter(it => it.outlet.toLowerCase().includes(q));
   if(salesFilter) items = items.filter(it => it.sales === salesFilter);
   if(statusFilter === 'belum') items = items.filter(it => !it.resolved);
