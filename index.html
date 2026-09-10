@@ -103,30 +103,7 @@
     border-radius: 2px; padding: 3px 9px; font-size: 12px; cursor:pointer;
   }
   .del-btn:hover{ background: #f7e6e0; }
-  .warn-badge{
-    display:inline-block; margin-left:6px; font-size: 11px; color: var(--rust);
-    background: rgba(163,70,46,0.1); border: 1px solid rgba(163,70,46,0.35);
-    border-radius: 2px; padding: 1px 6px; cursor: help;
-  }
   .empty-note{ color: var(--ink-soft); font-size: 13.5px; padding: 6px 0 2px; font-style: italic; }
-
-  .filterbar{
-    padding: 4px 24px 18px; border-top: 1px dashed var(--line);
-  }
-  .filter-row{ display:flex; align-items:center; gap: 14px; flex-wrap: wrap; }
-  .filter-field{ display:flex; flex-direction:column; gap:3px; font-size: 12px; color: var(--ink-soft); }
-  .filter-field input[type="date"]{
-    font-size: 13.5px; padding: 6px 8px; border: 1px solid var(--line);
-    border-radius: 2px; background: var(--paper); color: var(--ink);
-    font-family: inherit;
-  }
-  .reset-btn{
-    background: none; border: 1px solid var(--gold-deep); color: var(--gold-deep);
-    border-radius: 2px; padding: 7px 14px; font-size: 13px; cursor: pointer;
-    align-self: flex-end;
-  }
-  .reset-btn:hover{ background: rgba(201,151,31,0.1); }
-  .filter-active{ font-size: 12.5px; color: var(--ink-soft); align-self: flex-end; padding-bottom: 7px; }
 
   /* summary cards */
   .cards{ display:flex; gap: 14px; padding: 20px 24px 6px; flex-wrap: wrap; }
@@ -195,24 +172,8 @@
     </div>
 
     <div class="filelist">
-      <div class="flh">File yang sudah masuk rekap</div>
+      <div class="flh">File yang sudah masuk rekap (dipisah otomatis per tanggal)</div>
       <div id="fileListArea"><div class="empty-note">Belum ada file. Upload CSV pertama untuk mulai rekap.</div></div>
-    </div>
-
-    <div class="filterbar">
-      <div class="flh" style="margin-top:0;">Filter periode</div>
-      <div class="filter-row">
-        <label class="filter-field">
-          <span>Dari</span>
-          <input type="date" id="filterFrom">
-        </label>
-        <label class="filter-field">
-          <span>Sampai</span>
-          <input type="date" id="filterTo">
-        </label>
-        <button class="reset-btn" id="filterReset" type="button">Tampilkan Semua</button>
-        <span class="filter-active" id="filterActiveNote"></span>
-      </div>
     </div>
 
     <div class="cards" id="summaryCards"></div>
@@ -232,7 +193,7 @@
   <footer class="note">
     Data tersimpan otomatis di browser ini (localStorage) — buka lagi kapan saja tanpa upload ulang.<br>
     Catatan: data hanya tersimpan di browser & device ini, tidak otomatis muncul di device lain.<br>
-    Upload file dengan nama yang sama akan menggantikan (bukan menggandakan) data sebelumnya.
+    Upload file dengan nama yang sama akan menggantikan (bukan menggandakan) data sebelumnya. Jika satu file berisi beberapa tanggal, rekap akan otomatis memecahnya menjadi baris terpisah per tanggal.
   </footer>
 </div>
 
@@ -355,37 +316,6 @@ function allRows(){
   return out;
 }
 
-let filterStart = null; // Date, inklusif
-let filterEnd = null;   // Date, inklusif
-
-function dateInputToDate(value){
-  if(!value) return null;
-  const parts = value.split('-').map(Number);
-  return new Date(parts[0], parts[1]-1, parts[2]);
-}
-
-function getFilteredRows(){
-  const all = allRows();
-  if(!filterStart && !filterEnd) return all;
-  return all.filter(r => {
-    if(!r.dateObj) return false; // baris tanpa tanggal valid disembunyikan saat filter aktif
-    if(filterStart && r.dateObj < filterStart) return false;
-    if(filterEnd && r.dateObj > filterEnd) return false;
-    return true;
-  });
-}
-
-function updateFilterActiveNote(){
-  const note = document.getElementById('filterActiveNote');
-  if(filterStart || filterEnd){
-    const fromTxt = filterStart ? fmtDateShort(filterStart) : '(awal)';
-    const toTxt = filterEnd ? fmtDateShort(filterEnd) : '(akhir)';
-    note.textContent = 'Rekap hanya menghitung: ' + fromTxt + ' – ' + toTxt;
-  }else{
-    note.textContent = '';
-  }
-}
-
 function render(){
   renderFileList();
   renderSummary();
@@ -403,30 +333,43 @@ function renderFileList(){
     area.innerHTML = '<div class="empty-note">Belum ada file. Upload CSV pertama untuk mulai rekap.</div>';
     return;
   }
-  names.sort((a,b) => {
-    const da = filesData[a].rows[0] ? filesData[a].rows[0].dateObj : null;
-    const db = filesData[b].rows[0] ? filesData[b].rows[0].dateObj : null;
-    if(da && db) return db - da;
-    return a.localeCompare(b);
-  });
-  let html = '<table class="files"><thead><tr><th>File</th><th>Toko</th><th>Tanggal</th><th class="num">Baris</th><th class="num">Total</th><th></th></tr></thead><tbody>';
+  // Pecah setiap file jadi beberapa baris, satu baris per tanggal yang berbeda di dalamnya
+  let entries = [];
   for(const name of names){
     const rec = filesData[name];
-    const rows = rec.rows;
-    const customer = rows[0] ? rows[0].customer : '-';
-    const dateObj = rows[0] ? rows[0].dateObj : null;
-    const total = rows.reduce((s,r) => s + r.subtotal, 0);
-    const distinctDates = new Set(rows.map(r => r.dateStr || '-'));
-    const dateCell = distinctDates.size > 1
-      ? fmtDateShort(dateObj) + ' <span class="warn-badge" title="File ini berisi ' + distinctDates.size + ' tanggal berbeda: ' + Array.from(distinctDates).join(', ') + '">⚠ campur ' + distinctDates.size + ' tanggal</span>'
-      : fmtDateShort(dateObj);
+    const byDate = {};
+    for(const r of rec.rows){
+      const key = r.dateStr || '(tanpa tanggal)';
+      if(!byDate[key]) byDate[key] = { dateStr: key, dateObj: r.dateObj, customer: r.customer, rows: [] };
+      byDate[key].rows.push(r);
+    }
+    for(const key in byDate){
+      const g = byDate[key];
+      const total = g.rows.reduce((s,r) => s + r.subtotal, 0);
+      entries.push({
+        filename: name,
+        customer: g.customer,
+        dateStr: g.dateStr,
+        dateObj: g.dateObj,
+        count: g.rows.length,
+        total
+      });
+    }
+  }
+  entries.sort((a,b) => {
+    if(a.dateObj && b.dateObj) return b.dateObj - a.dateObj;
+    return (a.dateStr||'').localeCompare(b.dateStr||'');
+  });
+  let html = '<table class="files"><thead><tr><th>File</th><th>Toko</th><th>Tanggal</th><th class="num">Baris</th><th class="num">Total</th><th></th></tr></thead><tbody>';
+  for(const e of entries){
+    const dateCell = e.dateObj ? fmtDateShort(e.dateObj) : escapeHtml(e.dateStr);
     html += '<tr>' +
-      '<td>' + escapeHtml(name) + '</td>' +
-      '<td>' + escapeHtml(customer) + '</td>' +
+      '<td>' + escapeHtml(e.filename) + '</td>' +
+      '<td>' + escapeHtml(e.customer) + '</td>' +
       '<td>' + dateCell + '</td>' +
-      '<td class="num">' + rows.length + '</td>' +
-      '<td class="num">' + idr(total) + '</td>' +
-      '<td><button class="del-btn" data-file="' + encodeURIComponent(name) + '">Hapus</button></td>' +
+      '<td class="num">' + e.count + '</td>' +
+      '<td class="num">' + idr(e.total) + '</td>' +
+      '<td><button class="del-btn" data-file="' + encodeURIComponent(e.filename) + '" title="Menghapus seluruh file (semua tanggal di dalamnya)">Hapus</button></td>' +
       '</tr>';
   }
   html += '</tbody></table>';
@@ -437,7 +380,7 @@ function renderFileList(){
 }
 
 function renderSummary(){
-  const rows = getFilteredRows();
+  const rows = allRows();
   const totalOmzet = rows.reduce((s,r) => s + r.subtotal, 0);
   const totalQty = rows.reduce((s,r) => s + r.qty, 0);
   const invoiceSet = new Set(rows.map(r => r.customer + '|' + r.invoiceNo));
@@ -454,7 +397,7 @@ function renderSummary(){
 }
 
 function renderPerToko(){
-  const rows = getFilteredRows();
+  const rows = allRows();
   const byToko = {};
   for(const r of rows){
     const k = r.customer || '(tanpa nama toko)';
@@ -479,7 +422,7 @@ function renderPerToko(){
 }
 
 function renderPerProduk(){
-  const rows = getFilteredRows();
+  const rows = allRows();
   const byProduk = {};
   for(const r of rows){
     const k = r.product || '(tanpa nama produk)';
@@ -504,7 +447,7 @@ function renderPerProduk(){
 }
 
 function renderPerTanggal(){
-  const rows = getFilteredRows();
+  const rows = allRows();
   const byTgl = {};
   for(const r of rows){
     const k = r.dateStr || '(tanpa tanggal)';
@@ -556,26 +499,6 @@ dropzone.addEventListener('drop', (e) => {
   e.preventDefault();
   dropzone.classList.remove('dragover');
   if(e.dataTransfer.files) handleFiles(e.dataTransfer.files);
-});
-
-// filter tanggal
-document.getElementById('filterFrom').addEventListener('change', (e) => {
-  filterStart = dateInputToDate(e.target.value);
-  updateFilterActiveNote();
-  render();
-});
-document.getElementById('filterTo').addEventListener('change', (e) => {
-  filterEnd = dateInputToDate(e.target.value);
-  updateFilterActiveNote();
-  render();
-});
-document.getElementById('filterReset').addEventListener('click', () => {
-  filterStart = null;
-  filterEnd = null;
-  document.getElementById('filterFrom').value = '';
-  document.getElementById('filterTo').value = '';
-  updateFilterActiveNote();
-  render();
 });
 
 loadAllFilesFromStorage();
